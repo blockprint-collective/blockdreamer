@@ -1,0 +1,21 @@
+[package]
+name = "blockdreamer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+eth2 = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+futures = "0.3.4"
+sensitive_url = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+serde = { version = "1", features = ["derive"] }
+slot_clock = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+toml = "0.5"
+
+[patch]
+[patch.crates-io]
+fixed-hash = { git = "https://github.com/paritytech/parity-common", rev="df638ab0885293d21d656dc300d39236b69ce57d" }
+eth2_ssz = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+eth2_ssz_types = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+tree_hash = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+eth2_serde_utils = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
