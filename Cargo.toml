@@ -4,15 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-eth2 = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
-sensitive_url = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
-slot_clock = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
 futures = "0.3.4"
+itertools = "0.10.3"
+pathfinding = "3.0.11"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 toml = "0.5"
-itertools = "0.10.3"
-pathfinding = "3.0.11"
+
+eth2 = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
+eth2_network_config = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
+sensitive_url = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
+slot_clock = { git = "https://github.com/michaelsproul/lighthouse", branch = "propose-block-no-verify" }
 
 [dev-dependencies]
 proptest = "1.0.0"

@@ -9,8 +9,8 @@ use std::time::Duration;
 
 #[derive(Clone)]
 pub struct Node {
-    config: Arc<NodeConfig>,
-    client: BeaconNodeHttpClient,
+    pub config: Arc<NodeConfig>,
+    pub client: BeaconNodeHttpClient,
 }
 
 impl Node {

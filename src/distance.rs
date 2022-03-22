@@ -1,4 +1,4 @@
-use eth2::types::{Attestation, AttestationData, EthSpec};
+use eth2::types::{Attestation, AttestationData, BeaconBlock, EthSpec};
 use itertools::Itertools;
 use pathfinding::{kuhn_munkres::kuhn_munkres_min, matrix::Matrix};
 use std::collections::{HashMap, HashSet};
@@ -256,5 +256,21 @@ impl<E: EthSpec> Distance for &[Attestation<E>] {
         sort_deltas(&mut deltas);
 
         deltas
+    }
+}
+
+impl<E: EthSpec> Distance for BeaconBlock<E> {
+    type Delta = Vec<Delta>;
+
+    fn delta(&self, other: &Self) -> Option<Self::Delta> {
+        (&self.body().attestations()[..]).delta(&&other.body().attestations()[..])
+    }
+
+    fn delta_to_distance(deltas: &Self::Delta) -> usize {
+        <&[Attestation<E>]>::delta_to_distance(deltas)
+    }
+
+    fn invert_delta(delta: Self::Delta) -> Self::Delta {
+        <&[Attestation<E>]>::invert_delta(delta)
     }
 }

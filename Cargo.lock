@@ -313,6 +313,7 @@ name = "blockdreamer"
 version = "0.1.0"
 dependencies = [
  "eth2",
+ "eth2_network_config",
  "futures",
  "itertools",
  "pathfinding",
