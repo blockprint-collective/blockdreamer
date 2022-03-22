@@ -3,17 +3,20 @@ use std::{
     fs::File,
     io::{self, Read},
     path::Path,
+    sync::Arc,
 };
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub nodes: Vec<Node>,
+    pub nodes: Vec<Arc<Node>>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Node {
     pub name: String,
     pub url: String,
+    #[serde(default)]
+    pub verify_randao: Option<bool>,
 }
 
 impl Config {

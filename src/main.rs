@@ -1,15 +1,13 @@
 use config::Config;
-use eth2::{
-    types::{AggregateSignature, MainnetEthSpec, SignatureBytes, Slot},
-    BeaconNodeHttpClient, Timeouts,
-};
+use eth2::types::{MainnetEthSpec, Slot};
 use futures::future::join_all;
-use sensitive_url::SensitiveUrl;
+use node::Node;
 use std::path::Path;
-use std::time::Duration;
 
 mod config;
 mod distance;
+mod node;
+mod tests;
 
 type E = MainnetEthSpec;
 
@@ -23,30 +21,18 @@ async fn run() -> Result<(), String> {
     let config = Config::from_file(Path::new("config.toml")).unwrap();
     println!("{:#?}", config);
 
-    let clients = config
+    let nodes = config
         .nodes
         .into_iter()
-        .map(|node| {
-            let url =
-                SensitiveUrl::parse(&node.url).map_err(|e| format!("Invalid URL: {:?}", e))?;
-            let client = BeaconNodeHttpClient::new(url, Timeouts::set_all(Duration::from_secs(6)));
-            Ok((node.name, client))
-        })
+        .map(|config| Node::new(config))
         .collect::<Result<Vec<_>, String>>()?;
 
-    let slot = Slot::new(2518048);
-    let handles = clients
+    let slot = Slot::new(3417538);
+    let handles = nodes
         .iter()
-        .map(move |(name, client)| {
-            let randao_reveal =
-                SignatureBytes::deserialize(&AggregateSignature::infinity().serialize()).unwrap();
-
-            let client = client.clone();
-            tokio::spawn(async move {
-                client
-                    .get_validator_blocks::<E>(slot, &randao_reveal, None)
-                    .await
-            })
+        .map(move |node| {
+            let inner = node.clone();
+            tokio::spawn(async move { inner.get_block::<E>(slot).await })
         })
         .collect::<Vec<_>>();
 
