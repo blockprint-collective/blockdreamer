@@ -23,6 +23,9 @@ type E = MainnetEthSpec;
 // FIXME: add to config
 const VERBOSE: bool = false;
 
+const SIGNIFICANCE_NUMERATOR: usize = 2;
+const SIGNIFICANCE_DENOM: usize = 1;
+
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     run().await.unwrap();
@@ -32,6 +35,13 @@ async fn run() -> Result<(), String> {
     // Load config.
     let config = Config::from_file(Path::new("config.toml")).unwrap();
     eprintln!("{:#?}", config);
+
+    // Mapping from node name to label.
+    let labels = config
+        .nodes
+        .iter()
+        .map(|node| (node.name.clone(), node.label.clone()))
+        .collect::<HashMap<_, _>>();
 
     // Get network config and slot clock.
     let network_config = Eth2NetworkConfig::constant(&config.network)?
@@ -94,7 +104,9 @@ async fn run() -> Result<(), String> {
                         );
                     }
 
-                    inner.get_block::<E>(slot).await
+                    tokio::time::timeout(Duration::from_secs(6), inner.get_block::<E>(slot))
+                        .await
+                        .map_err(|_| format!("request to {} timed out after 6s", name))?
                 })
             })
             .collect::<Vec<_>>();
@@ -136,7 +148,7 @@ async fn run() -> Result<(), String> {
             Ok(Some(res)) => {
                 let (block, _) = res.data.deconstruct();
                 if let Some(dream_blocks) = all_blocks.get(&prev_slot) {
-                    let min_distance = dream_blocks
+                    let mut distances = dream_blocks
                         .iter()
                         .map(|(name, dream_block)| {
                             let delta = dream_block.delta(&block).unwrap();
@@ -145,17 +157,46 @@ async fn run() -> Result<(), String> {
                                 eprintln!("canonical({})-{} delta: {:#?}", prev_slot, name, delta);
                             }
                             eprintln!(
-                                "slot {}: canonical-{} distance: {}",
+                                "slot {}: canonical <=> {} distance: {}",
                                 prev_slot, name, distance
                             );
                             (name, distance)
                         })
-                        .min_by_key(|(_, distance)| *distance);
+                        .collect::<Vec<_>>();
 
-                    if let Some((closest_client, distance)) = min_distance {
+                    distances.sort_unstable_by_key(|(_, distance)| *distance);
+
+                    let (closest_name, closest_distance) = &distances[0];
+                    let (second_closest_name, second_closest_distance) = &distances[1];
+
+                    let closest_label = &labels[closest_name.as_str()];
+                    let second_closest_label = &labels[second_closest_name.as_str()];
+
+                    if closest_label == second_closest_label {
                         eprintln!(
-                            "slot {}: canonical block is likely {} (distance: {})",
-                            prev_slot, closest_client, distance
+                            "slot {}: canonical block is likely {}@{} (two closest match)",
+                            prev_slot, closest_label, closest_distance
+                        );
+                    } else if *second_closest_distance
+                        >= closest_distance * SIGNIFICANCE_NUMERATOR / SIGNIFICANCE_DENOM
+                    {
+                        eprintln!(
+                            "slot {}: canonical block is likely {} \
+                             (significantly closer @{} than 2nd place {}@{})",
+                            prev_slot,
+                            closest_label,
+                            closest_distance,
+                            second_closest_label,
+                            second_closest_distance
+                        );
+                    } else {
+                        eprintln!(
+                            "slot {}: canonical block is too close to call ({}@{} vs {}@{})",
+                            prev_slot,
+                            closest_name,
+                            closest_distance,
+                            second_closest_name,
+                            second_closest_distance
                         );
                     }
                 } else {
@@ -186,7 +227,7 @@ async fn run() -> Result<(), String> {
                         eprintln!("{}-{} delta: {:#?}", name1, name2, delta);
                     }
                     eprintln!(
-                        "slot {}: {}-{} distance: {}",
+                        "slot {}: {} <=> {} distance: {}",
                         slot,
                         name1,
                         name2,

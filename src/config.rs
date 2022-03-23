@@ -16,6 +16,7 @@ pub struct Config {
 #[derive(Debug, Deserialize)]
 pub struct Node {
     pub name: String,
+    pub label: String,
     pub url: String,
     #[serde(default)]
     pub verify_randao: Option<bool>,
