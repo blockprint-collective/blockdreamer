@@ -1,9 +1,13 @@
 use crate::distance::Distance;
 use config::Config;
-use eth2::types::{BeaconBlock, MainnetEthSpec};
+use eth2::{
+    types::{BeaconBlock, BlockId, MainnetEthSpec, Slot},
+    BeaconNodeHttpClient, Timeouts,
+};
 use eth2_network_config::Eth2NetworkConfig;
 use futures::future::join_all;
 use node::Node;
+use sensitive_url::SensitiveUrl;
 use slot_clock::{SlotClock, SystemTimeSlotClock};
 use std::collections::HashMap;
 use std::path::Path;
@@ -47,8 +51,15 @@ async fn run() -> Result<(), String> {
         .map(|config| Node::new(config))
         .collect::<Result<Vec<_>, String>>()?;
 
+    // Establish connection to canonical BN.
+    let canonical_bn = {
+        let url = SensitiveUrl::parse(&config.canonical_bn)
+            .map_err(|e| format!("Invalid URL: {:?}", e))?;
+        BeaconNodeHttpClient::new(url, Timeouts::set_all(Duration::from_secs(6)))
+    };
+
     // Main loop.
-    let mut all_blocks = HashMap::new();
+    let mut all_blocks: HashMap<Slot, HashMap<String, BeaconBlock<E>>> = HashMap::new();
 
     loop {
         let wait = slot_clock.duration_to_next_slot().expect("post genesis");
@@ -59,11 +70,36 @@ async fn run() -> Result<(), String> {
         // Dispatch requests in parallel to all dreaming nodes.
         let handles = nodes
             .iter()
-            .map(move |node| {
+            .map(|node| {
                 let inner = node.clone();
-                tokio::spawn(async move { inner.get_block::<E>(slot).await })
+                let slot_clock = slot_clock.clone();
+                let name = node.config.name.clone();
+
+                tokio::spawn(async move {
+                    let current_slot = slot_clock.now().unwrap();
+                    if current_slot != slot {
+                        return Err(format!(
+                            "too slow, slot {} expired (slot now: {})",
+                            slot, current_slot
+                        ));
+                    }
+                    let slot_offset = slot_clock
+                        .seconds_from_current_slot_start(spec.seconds_per_slot)
+                        .unwrap();
+                    if VERBOSE {
+                        eprintln!(
+                            "requesting block from {} at {}s after slot start",
+                            name,
+                            slot_offset.as_secs()
+                        );
+                    }
+
+                    inner.get_block::<E>(slot).await
+                })
             })
             .collect::<Vec<_>>();
+
+        let mut slot_blocks = HashMap::new();
 
         for (result, node) in join_all(handles).await.into_iter().zip(&nodes) {
             let name = node.config.name.clone();
@@ -82,10 +118,59 @@ async fn run() -> Result<(), String> {
                 block.body().attestations().len()
             );
 
-            all_blocks
-                .entry(slot)
-                .or_insert_with(HashMap::new)
-                .insert(node.config.name.clone(), block);
+            slot_blocks.insert(node.config.name.clone(), block);
+        }
+
+        if slot_blocks.len() == nodes.len() {
+            all_blocks.insert(slot, slot_blocks);
+        } else {
+            eprintln!("slot {slot}: discarding results due to failures");
+        }
+
+        // Compare canonical block from previous slot to dream blocks.
+        let prev_slot = slot - 1;
+        match canonical_bn
+            .get_beacon_blocks(BlockId::Slot(prev_slot))
+            .await
+        {
+            Ok(Some(res)) => {
+                let (block, _) = res.data.deconstruct();
+                if let Some(dream_blocks) = all_blocks.get(&prev_slot) {
+                    let min_distance = dream_blocks
+                        .iter()
+                        .map(|(name, dream_block)| {
+                            let delta = dream_block.delta(&block).unwrap();
+                            let distance = BeaconBlock::<E>::delta_to_distance(&delta);
+                            if VERBOSE {
+                                eprintln!("canonical({})-{} delta: {:#?}", prev_slot, name, delta);
+                            }
+                            eprintln!(
+                                "slot {}: canonical-{} distance: {}",
+                                prev_slot, name, distance
+                            );
+                            (name, distance)
+                        })
+                        .min_by_key(|(_, distance)| *distance);
+
+                    if let Some((closest_client, distance)) = min_distance {
+                        eprintln!(
+                            "slot {}: canonical block is likely {} (distance: {})",
+                            prev_slot, closest_client, distance
+                        );
+                    }
+                } else {
+                    eprintln!("No dream blocks for slot {}", prev_slot);
+                }
+            }
+            Ok(None) => {
+                eprintln!("No canonical block at slot {}", prev_slot);
+            }
+            Err(e) => {
+                eprintln!(
+                    "Error fetching canonical block at slot {}: {:?}",
+                    prev_slot, e
+                );
+            }
         }
 
         if let Some(blocks) = all_blocks.get(&slot) {
@@ -101,7 +186,8 @@ async fn run() -> Result<(), String> {
                         eprintln!("{}-{} delta: {:#?}", name1, name2, delta);
                     }
                     eprintln!(
-                        "{}-{} distance: {}",
+                        "slot {}: {}-{} distance: {}",
+                        slot,
                         name1,
                         name2,
                         BeaconBlock::<E>::delta_to_distance(&delta)

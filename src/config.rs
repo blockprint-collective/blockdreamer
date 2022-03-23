@@ -9,6 +9,7 @@ use std::{
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub network: String,
+    pub canonical_bn: String,
     pub nodes: Vec<Arc<Node>>,
 }
 
