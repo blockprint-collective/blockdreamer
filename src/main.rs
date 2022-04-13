@@ -167,7 +167,8 @@ async fn run() -> Result<(), String> {
                     distances.sort_unstable_by_key(|(_, distance)| *distance);
 
                     let (closest_name, closest_distance) = &distances[0];
-                    let (second_closest_name, second_closest_distance) = &distances[1];
+                    let (second_closest_name, second_closest_distance) =
+                        &distances.get(1).unwrap_or(&distances[0]);
 
                     let closest_label = &labels[closest_name.as_str()];
                     let second_closest_label = &labels[second_closest_name.as_str()];
