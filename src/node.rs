@@ -47,7 +47,7 @@ impl Node {
         let randao_reveal =
             SignatureBytes::deserialize(&AggregateSignature::infinity().serialize()).unwrap();
         self.client
-            .get_validator_blocks::<E>(slot, &randao_reveal, None)
+            .get_validator_blocks::<E, _>(slot, &randao_reveal, None)
             .await
             .map(|res| res.data)
     }
