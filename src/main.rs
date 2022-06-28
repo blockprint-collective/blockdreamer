@@ -1,4 +1,5 @@
 use crate::distance::Distance;
+use crate::post::PostEndpoint;
 use config::Config;
 use eth2::{
     types::{BeaconBlock, BlockId, MainnetEthSpec, Slot},
@@ -6,6 +7,7 @@ use eth2::{
 };
 use eth2_network_config::Eth2NetworkConfig;
 use futures::future::join_all;
+use itertools::Itertools;
 use node::Node;
 use sensitive_url::SensitiveUrl;
 use slot_clock::{SlotClock, SystemTimeSlotClock};
@@ -16,6 +18,7 @@ use std::time::Duration;
 mod config;
 mod distance;
 mod node;
+mod post;
 mod tests;
 
 type E = MainnetEthSpec;
@@ -68,6 +71,11 @@ async fn run() -> Result<(), String> {
         BeaconNodeHttpClient::new(url, Timeouts::set_all(Duration::from_secs(6)))
     };
 
+    // Establish connection to post endpoint.
+    let post_endpoint = config
+        .post_endpoint
+        .map(|url| PostEndpoint::new(url, config.post_results_dir.clone()));
+
     // Main loop.
     let mut all_blocks: HashMap<Slot, HashMap<String, BeaconBlock<E>>> = HashMap::new();
 
@@ -112,6 +120,7 @@ async fn run() -> Result<(), String> {
             .collect::<Vec<_>>();
 
         let mut slot_blocks = HashMap::new();
+        let mut post_blocks = vec![];
 
         for (result, node) in join_all(handles).await.into_iter().zip(&nodes) {
             let name = node.config.name.clone();
@@ -130,7 +139,27 @@ async fn run() -> Result<(), String> {
                 block.body().attestations().len()
             );
 
+            if post_endpoint.is_some() {
+                post_blocks.push(block.clone());
+            }
+
             slot_blocks.insert(node.config.name.clone(), block);
+        }
+
+        if let Some(ref post_endpoint) = post_endpoint {
+            let names_and_labels = nodes
+                .iter()
+                .map(|node| (node.config.name.clone(), node.config.label.clone()))
+                .collect_vec();
+            let endpoint = post_endpoint.clone();
+            tokio::spawn(async move {
+                if let Err(e) = endpoint
+                    .post_blocks(names_and_labels, post_blocks, slot)
+                    .await
+                {
+                    eprintln!("error posting blocks at slot {}: {}", slot, e);
+                }
+            });
         }
 
         if slot_blocks.len() == nodes.len() {

@@ -5,11 +5,16 @@ use std::{
     path::Path,
     sync::Arc,
 };
+use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub network: String,
     pub canonical_bn: String,
+    /// URL to push the dreamt blocks to (probably Lighthouse's `block_rewards` POST endpoint).
+    pub post_endpoint: Option<String>,
+    /// Directory to save post responses to.
+    pub post_results_dir: Option<PathBuf>,
     pub nodes: Vec<Arc<Node>>,
 }
 
