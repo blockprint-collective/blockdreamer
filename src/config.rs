@@ -1,11 +1,11 @@
 use serde::Deserialize;
+use std::path::PathBuf;
 use std::{
     fs::File,
     io::{self, Read},
     path::Path,
     sync::Arc,
 };
-use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -15,6 +15,11 @@ pub struct Config {
     pub post_endpoint: Option<String>,
     /// Directory to save post responses to.
     pub post_results_dir: Option<PathBuf>,
+    /// Whether to compare attestation rewards after POSTing to the endpoint.
+    ///
+    /// Assumes the `post_endpoint` is Lighthouse's `block_rewards` endpoint.
+    #[serde(default)]
+    pub compare_rewards: bool,
     pub nodes: Vec<Arc<Node>>,
 }
 

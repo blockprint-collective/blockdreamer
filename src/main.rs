@@ -74,7 +74,7 @@ async fn run() -> Result<(), String> {
     // Establish connection to post endpoint.
     let post_endpoint = config
         .post_endpoint
-        .map(|url| PostEndpoint::new(url, config.post_results_dir.clone()));
+        .map(|url| PostEndpoint::new(url, config.post_results_dir.clone(), config.compare_rewards));
 
     // Main loop.
     let mut all_blocks: HashMap<Slot, HashMap<String, BeaconBlock<E>>> = HashMap::new();

@@ -11,15 +11,17 @@ pub struct PostEndpoint {
     client: Client,
     url: String,
     persistence_dir: Option<PathBuf>,
+    compare_rewards: bool,
 }
 
 impl PostEndpoint {
-    pub fn new(url: String, persistence_dir: Option<PathBuf>) -> Arc<Self> {
+    pub fn new(url: String, persistence_dir: Option<PathBuf>, compare_rewards: bool) -> Arc<Self> {
         let client = Client::new();
         Arc::new(Self {
             client,
             url,
             persistence_dir,
+            compare_rewards,
         })
     }
 
@@ -47,13 +49,28 @@ impl PostEndpoint {
             ));
         }
 
-        if let Some(persistence_dir) = &self.persistence_dir {
-            let response_json: Vec<Value> = response
-                .json()
-                .await
-                .map_err(|e| format!("invalid JSON from POST endpoint: {}", e))?;
+        let response_json: Vec<Value> = response
+            .json()
+            .await
+            .map_err(|e| format!("invalid JSON from POST endpoint: {}", e))?;
 
-            for ((name, label), result) in names_and_labels.into_iter().zip(response_json) {
+        let mut max_reward = 0;
+        let mut max_reward_nodes = vec![];
+
+        for ((name, label), result) in names_and_labels.into_iter().zip(response_json) {
+            if self.compare_rewards {
+                let reward = result["attestation_rewards"]["total"].as_u64().unwrap();
+                println!("reward from {name}: {reward} gwei");
+
+                if reward > max_reward {
+                    max_reward = reward;
+                    max_reward_nodes = vec![name.clone()];
+                } else if reward == max_reward {
+                    max_reward_nodes.push(name.clone());
+                }
+            }
+
+            if let Some(persistence_dir) = &self.persistence_dir {
                 // Store results by client label (same format as blockprint training data).
                 let label_dir = persistence_dir.join(label);
                 create_dir_all(&label_dir)
@@ -72,6 +89,10 @@ impl PostEndpoint {
                     .await
                     .map_err(|e| format!("unable to write {}: {}", result_path.display(), e))?;
             }
+        }
+
+        if self.compare_rewards {
+            println!("most profitable block from {max_reward_nodes:?}");
         }
 
         Ok(())
