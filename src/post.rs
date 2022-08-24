@@ -1,3 +1,4 @@
+use crate::Config;
 use eth2::types::{BeaconBlock, EthSpec, Slot};
 use reqwest::Client;
 use serde_json::Value;
@@ -12,17 +13,22 @@ pub struct PostEndpoint {
     url: String,
     persistence_dir: Option<PathBuf>,
     compare_rewards: bool,
+    require_all: bool,
+    require_same_parent: bool,
 }
 
 impl PostEndpoint {
-    pub fn new(url: String, persistence_dir: Option<PathBuf>, compare_rewards: bool) -> Arc<Self> {
+    pub fn new(config: &Config) -> Option<Arc<Self>> {
         let client = Client::new();
-        Arc::new(Self {
+        let url = config.post_endpoint.clone()?;
+        Some(Arc::new(Self {
             client,
             url,
-            persistence_dir,
-            compare_rewards,
-        })
+            persistence_dir: config.post_results_dir.clone(),
+            compare_rewards: config.compare_rewards,
+            require_all: config.post_require_all,
+            require_same_parent: config.post_require_same_parent,
+        }))
     }
 
     pub async fn post_blocks<E: EthSpec>(
@@ -31,6 +37,22 @@ impl PostEndpoint {
         blocks: Vec<BeaconBlock<E>>,
         slot: Slot,
     ) -> Result<(), String> {
+        if self.require_all && names_and_labels.len() != blocks.len() {
+            return Err(format!(
+                "only got {}/{} blocks",
+                blocks.len(),
+                names_and_labels.len()
+            ));
+        }
+
+        if self.require_same_parent
+            && !blocks
+                .iter()
+                .all(|block| block.parent_root() == blocks[0].parent_root())
+        {
+            return Err(format!("not all blocks build on the same parent"));
+        }
+
         let response = self
             .client
             .post(&self.url)

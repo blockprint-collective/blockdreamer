@@ -60,7 +60,8 @@ async fn run() -> Result<(), String> {
     // Establish connections to beacon nodes.
     let nodes = config
         .nodes
-        .into_iter()
+        .iter()
+        .cloned()
         .map(|config| Node::new(config))
         .collect::<Result<Vec<_>, String>>()?;
 
@@ -72,9 +73,7 @@ async fn run() -> Result<(), String> {
     };
 
     // Establish connection to post endpoint.
-    let post_endpoint = config
-        .post_endpoint
-        .map(|url| PostEndpoint::new(url, config.post_results_dir.clone(), config.compare_rewards));
+    let post_endpoint = PostEndpoint::new(&config);
 
     // Main loop.
     let mut all_blocks: HashMap<Slot, HashMap<String, BeaconBlock<E>>> = HashMap::new();

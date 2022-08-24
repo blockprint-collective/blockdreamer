@@ -20,6 +20,12 @@ pub struct Config {
     /// Assumes the `post_endpoint` is Lighthouse's `block_rewards` endpoint.
     #[serde(default)]
     pub compare_rewards: bool,
+    /// Only post blocks if all endpoints return a block.
+    #[serde(default = "default_true")]
+    pub post_require_all: bool,
+    /// Only post blocks if all blocks have the same parent.
+    #[serde(default = "default_true")]
+    pub post_require_same_parent: bool,
     pub nodes: Vec<Arc<Node>>,
 }
 
@@ -39,4 +45,8 @@ impl Config {
         f.read_to_string(&mut s)?;
         Ok(toml::from_str(&s).unwrap())
     }
+}
+
+fn default_true() -> bool {
+    true
 }
