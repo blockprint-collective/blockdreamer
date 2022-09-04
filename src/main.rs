@@ -2,7 +2,7 @@ use crate::distance::Distance;
 use crate::post::PostEndpoint;
 use config::Config;
 use eth2::{
-    types::{BeaconBlock, BlockId, MainnetEthSpec, Slot},
+    types::{BeaconBlock, BlockId, Slot},
     BeaconNodeHttpClient, Timeouts,
 };
 use eth2_network_config::Eth2NetworkConfig;
@@ -21,7 +21,10 @@ mod node;
 mod post;
 mod tests;
 
-type E = MainnetEthSpec;
+#[cfg(all(feature = "mainnet", not(feature = "gnosis")))]
+type E = eth2::types::MainnetEthSpec;
+#[cfg(feature = "gnosis")]
+type E = eth2::types::GnosisEthSpec;
 
 // FIXME: add to config
 const VERBOSE: bool = false;
