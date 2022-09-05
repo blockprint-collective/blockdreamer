@@ -18,10 +18,10 @@ toml = "0.5"
 reqwest = "0.11.11"
 serde_json = "1.0.0"
 
-eth2 = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-eth2_network_config = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-sensitive_url = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-slot_clock = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+eth2 = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+eth2_network_config = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+sensitive_url = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+slot_clock = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
 
 [dev-dependencies]
 proptest = "1.0.0"
@@ -29,8 +29,8 @@ proptest = "1.0.0"
 [patch]
 [patch.crates-io]
 fixed-hash = { git = "https://github.com/paritytech/parity-common", rev="df638ab0885293d21d656dc300d39236b69ce57d" }
-eth2_ssz = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-eth2_ssz_types = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-tree_hash = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-eth2_serde_utils = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-eth2_hashing = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+eth2_ssz = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+eth2_ssz_types = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+tree_hash = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+eth2_serde_utils = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+eth2_hashing = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }

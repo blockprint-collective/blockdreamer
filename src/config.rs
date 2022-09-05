@@ -8,6 +8,7 @@ use std::{
 };
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Config {
     pub network: String,
     pub canonical_bn: String,
@@ -30,12 +31,13 @@ pub struct Config {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Node {
     pub name: String,
     pub label: String,
     pub url: String,
     #[serde(default)]
-    pub verify_randao: Option<bool>,
+    pub skip_randao_verification: bool,
 }
 
 impl Config {

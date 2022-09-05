@@ -1,6 +1,6 @@
 use crate::config::Node as NodeConfig;
 use eth2::{
-    types::{AggregateSignature, BeaconBlock, EthSpec, SignatureBytes, Slot},
+    types::{BeaconBlock, EthSpec, Signature, SkipRandaoVerification, Slot},
     BeaconNodeHttpClient, Timeouts,
 };
 use sensitive_url::SensitiveUrl;
@@ -21,34 +21,20 @@ impl Node {
     }
 
     pub async fn get_block<E: EthSpec>(&self, slot: Slot) -> Result<BeaconBlock<E>, String> {
-        if let Some(verify_randao) = self.config.verify_randao {
-            self.get_block_with_verify_randao(slot, verify_randao).await
-        } else {
-            self.get_block_randao_oblivious(slot).await
-        }
-        .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))
-    }
-
-    async fn get_block_with_verify_randao<E: EthSpec>(
-        &self,
-        slot: Slot,
-        verify_randao: bool,
-    ) -> Result<BeaconBlock<E>, eth2::Error> {
+        let randao_reveal = Signature::infinity().unwrap().into();
         self.client
-            .get_validator_blocks_with_verify_randao(slot, None, None, Some(verify_randao))
+            .get_validator_blocks_modular::<E, _>(
+                slot,
+                &randao_reveal,
+                None,
+                if self.config.skip_randao_verification {
+                    SkipRandaoVerification::Yes
+                } else {
+                    SkipRandaoVerification::No
+                },
+            )
             .await
             .map(|res| res.data)
-    }
-
-    async fn get_block_randao_oblivious<E: EthSpec>(
-        &self,
-        slot: Slot,
-    ) -> Result<BeaconBlock<E>, eth2::Error> {
-        let randao_reveal =
-            SignatureBytes::deserialize(&AggregateSignature::infinity().serialize()).unwrap();
-        self.client
-            .get_validator_blocks::<E, _>(slot, &randao_reveal, None)
-            .await
-            .map(|res| res.data)
+            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))
     }
 }
