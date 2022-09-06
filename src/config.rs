@@ -16,6 +16,9 @@ pub struct Config {
     pub post_endpoint: Option<String>,
     /// Directory to save post responses to.
     pub post_results_dir: Option<PathBuf>,
+    /// Whether to post extra data about the nodes that produced the blocks.
+    #[serde(default)]
+    pub post_extra_data: bool,
     /// Whether to compare attestation rewards after POSTing to the endpoint.
     ///
     /// Assumes the `post_endpoint` is Lighthouse's `block_rewards` endpoint.

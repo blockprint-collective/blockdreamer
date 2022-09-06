@@ -1,6 +1,7 @@
 use crate::Config;
 use eth2::types::{BeaconBlock, EthSpec, Slot};
 use reqwest::Client;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -15,6 +16,15 @@ pub struct PostEndpoint {
     compare_rewards: bool,
     require_all: bool,
     require_same_parent: bool,
+    extra_data: bool,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(bound = "E: EthSpec")]
+pub struct PostPayload<E: EthSpec> {
+    names: Vec<String>,
+    labels: Vec<String>,
+    blocks: Vec<BeaconBlock<E>>,
 }
 
 impl PostEndpoint {
@@ -28,6 +38,7 @@ impl PostEndpoint {
             compare_rewards: config.compare_rewards,
             require_all: config.post_require_all,
             require_same_parent: config.post_require_same_parent,
+            extra_data: config.post_extra_data,
         }))
     }
 
@@ -53,13 +64,21 @@ impl PostEndpoint {
             return Err(format!("not all blocks build on the same parent"));
         }
 
-        let response = self
-            .client
-            .post(&self.url)
-            .json(&blocks)
-            .send()
-            .await
-            .map_err(|e| format!("POST error: {}", e))?;
+        let response = if self.extra_data {
+            let (names, labels) = names_and_labels.iter().cloned().unzip();
+            let payload = PostPayload {
+                names,
+                labels,
+                blocks,
+            };
+
+            self.client.post(&self.url).json(&payload)
+        } else {
+            self.client.post(&self.url).json(&blocks)
+        }
+        .send()
+        .await
+        .map_err(|e| format!("POST error: {}", e))?;
 
         if !response.status().is_success() {
             return Err(format!(
