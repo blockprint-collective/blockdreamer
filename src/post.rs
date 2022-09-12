@@ -1,5 +1,5 @@
 use crate::Config;
-use eth2::types::{BeaconBlock, EthSpec, Slot};
+use eth2::types::{BlindedBeaconBlock, EthSpec, Slot};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -24,7 +24,7 @@ pub struct PostEndpoint {
 pub struct PostPayload<E: EthSpec> {
     names: Vec<String>,
     labels: Vec<String>,
-    blocks: Vec<BeaconBlock<E>>,
+    blocks: Vec<BlindedBeaconBlock<E>>,
 }
 
 impl PostEndpoint {
@@ -45,7 +45,7 @@ impl PostEndpoint {
     pub async fn post_blocks<E: EthSpec>(
         &self,
         names_and_labels: Vec<(String, String)>,
-        blocks: Vec<BeaconBlock<E>>,
+        blocks: Vec<BlindedBeaconBlock<E>>,
         slot: Slot,
     ) -> Result<(), String> {
         if self.require_all && names_and_labels.len() != blocks.len() {

@@ -41,6 +41,8 @@ pub struct Node {
     pub url: String,
     #[serde(default)]
     pub skip_randao_verification: bool,
+    #[serde(default)]
+    pub use_builder: bool,
 }
 
 impl Config {

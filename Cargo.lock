@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "account_utils"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "directory",
  "eth2_keystore",
@@ -308,7 +308,7 @@ dependencies = [
 [[package]]
 name = "bls"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "blst",
  "eth2_hashing",
@@ -390,7 +390,7 @@ dependencies = [
 [[package]]
 name = "cached_tree_hash"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_hashing",
  "eth2_ssz",
@@ -480,7 +480,7 @@ dependencies = [
 [[package]]
 name = "clap_utils"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "clap",
  "dirs",
@@ -506,12 +506,12 @@ dependencies = [
 [[package]]
 name = "compare_fields"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 
 [[package]]
 name = "compare_fields_derive"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "quote",
  "syn",
@@ -752,7 +752,7 @@ checksum = "b72465f46d518f6015d9cf07f7f3013a95dd6b9c2747c3d65ae0cce43929d14f"
 [[package]]
 name = "deposit_contract"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_ssz",
  "ethabi",
@@ -819,7 +819,7 @@ dependencies = [
 [[package]]
 name = "directory"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "clap",
  "clap_utils",
@@ -1017,7 +1017,7 @@ dependencies = [
 [[package]]
 name = "eth2"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "account_utils",
  "bytes",
@@ -1046,7 +1046,7 @@ dependencies = [
 [[package]]
 name = "eth2_config"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "paste",
  "types",
@@ -1055,7 +1055,7 @@ dependencies = [
 [[package]]
 name = "eth2_hashing"
 version = "0.3.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "cpufeatures",
  "lazy_static",
@@ -1066,7 +1066,7 @@ dependencies = [
 [[package]]
 name = "eth2_interop_keypairs"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "bls",
  "eth2_hashing",
@@ -1081,7 +1081,7 @@ dependencies = [
 [[package]]
 name = "eth2_key_derivation"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "bls",
  "num-bigint-dig",
@@ -1093,7 +1093,7 @@ dependencies = [
 [[package]]
 name = "eth2_keystore"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "aes",
  "bls",
@@ -1115,7 +1115,7 @@ dependencies = [
 [[package]]
 name = "eth2_network_config"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "enr",
  "eth2_config",
@@ -1128,7 +1128,7 @@ dependencies = [
 [[package]]
 name = "eth2_serde_utils"
 version = "0.1.1"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "ethereum-types",
  "hex",
@@ -1140,7 +1140,7 @@ dependencies = [
 [[package]]
 name = "eth2_ssz"
 version = "0.4.1"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "ethereum-types",
  "itertools",
@@ -1162,7 +1162,7 @@ dependencies = [
 [[package]]
 name = "eth2_ssz_types"
 version = "0.2.2"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "derivative",
  "eth2_serde_utils",
@@ -1177,7 +1177,7 @@ dependencies = [
 [[package]]
 name = "eth2_wallet"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_key_derivation",
  "eth2_keystore",
@@ -1291,7 +1291,7 @@ dependencies = [
 [[package]]
 name = "filesystem"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "winapi",
  "windows-acl",
@@ -1617,7 +1617,7 @@ dependencies = [
 [[package]]
 name = "hashset_delay"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "futures",
  "tokio-util 0.6.10",
@@ -1883,7 +1883,7 @@ dependencies = [
 [[package]]
 name = "int_to_bytes"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "bytes",
 ]
@@ -2408,7 +2408,7 @@ dependencies = [
 [[package]]
 name = "lighthouse_metrics"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "lazy_static",
  "prometheus",
@@ -2417,7 +2417,7 @@ dependencies = [
 [[package]]
 name = "lighthouse_network"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "directory",
  "dirs",
@@ -2460,7 +2460,7 @@ dependencies = [
 [[package]]
 name = "lighthouse_version"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "git-version",
  "target_info",
@@ -2485,7 +2485,7 @@ dependencies = [
 [[package]]
 name = "lockfile"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "fs2",
 ]
@@ -2571,7 +2571,7 @@ dependencies = [
 [[package]]
 name = "merkle_proof"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_hashing",
  "ethereum-types",
@@ -3442,7 +3442,7 @@ dependencies = [
 [[package]]
 name = "proto_array"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_ssz",
  "eth2_ssz_derive",
@@ -3905,7 +3905,7 @@ checksum = "4501abdff3ae82a1c1b477a17252eb69cee9e66eb915c1abaa4f44d873df9f09"
 [[package]]
 name = "safe_arith"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 
 [[package]]
 name = "salsa20"
@@ -4028,7 +4028,7 @@ dependencies = [
 [[package]]
 name = "sensitive_url"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "serde",
  "url",
@@ -4202,7 +4202,7 @@ dependencies = [
 [[package]]
 name = "slashing_protection"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_serde_utils",
  "filesystem",
@@ -4318,7 +4318,7 @@ dependencies = [
 [[package]]
 name = "slot_clock"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "lazy_static",
  "lighthouse_metrics",
@@ -4405,7 +4405,7 @@ checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 [[package]]
 name = "state_processing"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "bls",
  "derivative",
@@ -4435,7 +4435,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "store"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "db-key",
  "directory",
@@ -4513,7 +4513,7 @@ dependencies = [
 [[package]]
 name = "swap_or_not_shuffle"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_hashing",
  "ethereum-types",
@@ -4563,7 +4563,7 @@ checksum = "c63f48baada5c52e65a29eef93ab4f8982681b67f9e8d29c7b05abcfec2b9ffe"
 [[package]]
 name = "task_executor"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "exit-future",
  "futures",
@@ -4602,7 +4602,7 @@ dependencies = [
 [[package]]
 name = "test_random_derive"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "quote",
  "syn",
@@ -4918,7 +4918,7 @@ dependencies = [
 [[package]]
 name = "tree_hash"
 version = "0.4.1"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "eth2_hashing",
  "ethereum-types",
@@ -4996,7 +4996,7 @@ checksum = "dcf81ac59edc17cc8697ff311e8f5ef2d99fcbd9817b34cec66f90b6c3dfd987"
 [[package]]
 name = "types"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "bls",
  "cached_tree_hash",
@@ -5140,7 +5140,7 @@ checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
 [[package]]
 name = "unused_port"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 
 [[package]]
 name = "url"
@@ -5167,7 +5167,7 @@ dependencies = [
 [[package]]
 name = "validator_dir"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#248293b70e67237df3767653452b6043492b2968"
+source = "git+https://github.com/michaelsproul/lighthouse?branch=skip-randao-verification#6db77ed1ba691a871ef94caeb26b911e09a6fcd9"
 dependencies = [
  "bls",
  "deposit_contract",

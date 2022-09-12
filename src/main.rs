@@ -2,7 +2,7 @@ use crate::distance::Distance;
 use crate::post::PostEndpoint;
 use config::Config;
 use eth2::{
-    types::{BeaconBlock, BlockId, Slot},
+    types::{BlindedBeaconBlock, BlockId, FullPayload, Slot},
     BeaconNodeHttpClient, Timeouts,
 };
 use eth2_network_config::Eth2NetworkConfig;
@@ -79,7 +79,7 @@ async fn run() -> Result<(), String> {
     let post_endpoint = PostEndpoint::new(&config);
 
     // Main loop.
-    let mut all_blocks: HashMap<Slot, HashMap<String, BeaconBlock<E>>> = HashMap::new();
+    let mut all_blocks: HashMap<Slot, HashMap<String, BlindedBeaconBlock<E>>> = HashMap::new();
 
     loop {
         let wait = slot_clock.duration_to_next_slot().expect("post genesis");
@@ -114,9 +114,14 @@ async fn run() -> Result<(), String> {
                         );
                     }
 
-                    tokio::time::timeout(Duration::from_secs(6), inner.get_block::<E>(slot))
-                        .await
-                        .map_err(|_| format!("request to {} timed out after 6s", name))?
+                    let blinded_block = if inner.config.use_builder {
+                        inner.get_blinded_block_with_timeout::<E>(slot).await?
+                    } else {
+                        let full_block = inner.get_block_with_timeout::<E>(slot).await?;
+                        let (blinded_block, _payload) = full_block.into();
+                        blinded_block
+                    };
+                    Ok(blinded_block)
                 })
             })
             .collect::<Vec<_>>();
@@ -177,13 +182,14 @@ async fn run() -> Result<(), String> {
             .await
         {
             Ok(Some(res)) => {
-                let (block, _) = res.data.deconstruct();
+                let (full_block, _) = res.data.deconstruct();
+                let (block, _) = full_block.into();
                 if let Some(dream_blocks) = all_blocks.get(&prev_slot) {
                     let mut distances = dream_blocks
                         .iter()
                         .map(|(name, dream_block)| {
                             let delta = dream_block.delta(&block).unwrap();
-                            let distance = BeaconBlock::<E>::delta_to_distance(&delta);
+                            let distance = BlindedBeaconBlock::<E>::delta_to_distance(&delta);
                             if VERBOSE {
                                 eprintln!("canonical({})-{} delta: {:#?}", prev_slot, name, delta);
                             }
@@ -263,7 +269,7 @@ async fn run() -> Result<(), String> {
                         slot,
                         name1,
                         name2,
-                        BeaconBlock::<E>::delta_to_distance(&delta)
+                        BlindedBeaconBlock::<E>::delta_to_distance(&delta)
                     );
                 }
             }
