@@ -2,7 +2,7 @@ use crate::distance::Distance;
 use crate::post::PostEndpoint;
 use config::Config;
 use eth2::{
-    types::{BlindedBeaconBlock, BlockId, FullPayload, Slot},
+    types::{BlindedBeaconBlock, BlockId, Slot},
     BeaconNodeHttpClient, Timeouts,
 };
 use eth2_network_config::Eth2NetworkConfig;
@@ -31,6 +31,7 @@ const VERBOSE: bool = false;
 
 const SIGNIFICANCE_NUMERATOR: usize = 2;
 const SIGNIFICANCE_DENOM: usize = 1;
+const NUM_SLOTS_IN_MEMORY: u64 = 8;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
@@ -274,5 +275,9 @@ async fn run() -> Result<(), String> {
                 }
             }
         }
+
+        // Prune blocks to prevent the in-memory map from consuming too much memory. We really only
+        // need the 2 most recent slots, but there's no harm in keeping a few more.
+        all_blocks.retain(|stored_slot, _| *stored_slot + NUM_SLOTS_IN_MEMORY >= slot);
     }
 }

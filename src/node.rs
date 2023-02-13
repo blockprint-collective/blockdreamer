@@ -1,9 +1,6 @@
 use crate::config::Node as NodeConfig;
 use eth2::{
-    types::{
-        BeaconBlock, BlindedBeaconBlock, EthSpec, ExecPayload, Signature, SkipRandaoVerification,
-        Slot,
-    },
+    types::{BeaconBlock, BlindedBeaconBlock, EthSpec, Signature, SkipRandaoVerification, Slot},
     BeaconNodeHttpClient, Timeouts,
 };
 use sensitive_url::SensitiveUrl;
