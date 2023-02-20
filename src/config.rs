@@ -10,7 +10,8 @@ use std::{
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
-    pub network: String,
+    pub network: Option<String>,
+    pub network_dir: Option<PathBuf>,
     pub canonical_bn: String,
     /// URL to push the dreamt blocks to (probably Lighthouse's `block_rewards` POST endpoint).
     pub post_endpoint: Option<String>,

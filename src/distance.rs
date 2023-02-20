@@ -1,4 +1,4 @@
-use eth2::types::{Attestation, AttestationData, BeaconBlock, EthSpec, ExecPayload};
+use eth2::types::{AbstractExecPayload, Attestation, AttestationData, BeaconBlock, EthSpec};
 use itertools::Itertools;
 use pathfinding::{kuhn_munkres::kuhn_munkres_min, matrix::Matrix};
 use std::collections::{HashMap, HashSet};
@@ -259,7 +259,7 @@ impl<E: EthSpec> Distance for &[Attestation<E>] {
     }
 }
 
-impl<E: EthSpec, Payload: ExecPayload<E>> Distance for BeaconBlock<E, Payload> {
+impl<E: EthSpec, Payload: AbstractExecPayload<E>> Distance for BeaconBlock<E, Payload> {
     type Delta = Vec<Delta>;
 
     fn delta(&self, other: &Self) -> Option<Self::Delta> {

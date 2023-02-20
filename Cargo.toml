@@ -18,19 +18,22 @@ toml = "0.5"
 reqwest = "0.11.11"
 serde_json = "1.0.0"
 
-eth2 = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-eth2_network_config = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-sensitive_url = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-slot_clock = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+eth2 = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+eth2_network_config = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+sensitive_url = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+slot_clock = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
 
 [dev-dependencies]
 proptest = "1.0.0"
 
 [patch]
 [patch.crates-io]
-fixed-hash = { git = "https://github.com/paritytech/parity-common", rev="df638ab0885293d21d656dc300d39236b69ce57d" }
-eth2_ssz = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-eth2_ssz_types = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-tree_hash = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-eth2_serde_utils = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
-eth2_hashing = { git = "https://github.com/michaelsproul/lighthouse", branch = "skip-randao-verification" }
+eth2_ssz = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+eth2_ssz_derive = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+eth2_ssz_types = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+tree_hash = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+tree_hash_derive = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+eth2_serde_utils = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+eth2_hashing = { git = "https://github.com/sigp/lighthouse", branch = "capella" }
+arbitrary = { git = "https://github.com/michaelsproul/arbitrary", rev="a572fd8743012a4f1ada5ee5968b1b3619c427ba" }
+

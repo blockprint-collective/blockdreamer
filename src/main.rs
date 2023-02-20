@@ -51,8 +51,13 @@ async fn run() -> Result<(), String> {
         .collect::<HashMap<_, _>>();
 
     // Get network config and slot clock.
-    let network_config = Eth2NetworkConfig::constant(&config.network)?
-        .ok_or_else(|| format!("Unknown network `{}`", config.network))?;
+    let network_config = match (&config.network, &config.network_dir) {
+        (Some(network), None) => Eth2NetworkConfig::constant(network)?
+            .ok_or_else(|| format!("Unknown network `{}`", network))?,
+        (None, Some(network_dir)) => Eth2NetworkConfig::load(network_dir.clone())?,
+        (Some(_), Some(_)) => return Err("conflicting network and network_dir".into()),
+        (None, None) => return Err("one of network or network_dir is required".into()),
+    };
     let spec = network_config.chain_spec::<E>()?;
     let genesis_state = network_config.beacon_state::<E>()?;
     let slot_clock = SystemTimeSlotClock::new(
