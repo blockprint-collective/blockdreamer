@@ -52,7 +52,7 @@ jobs:
                   docker buildx build \
                       --platform=linux/${SHORT_ARCH} \
                       --file ./Dockerfile . \
-                      --tag ${IMAGE_NAME}:${VERSION}-${SHORT_ARCH}${VERSION_SUFFIX} \
+                      --tag ${IMAGE_NAME}:${VERSION}${VERSION_SUFFIX} \
                       --provenance=false \
                       --push
 
