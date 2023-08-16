@@ -13,7 +13,13 @@ use sensitive_url::SensitiveUrl;
 use slot_clock::{SlotClock, SystemTimeSlotClock};
 use std::collections::HashMap;
 use std::path::Path;
+use std::process::ExitCode;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
 use std::time::Duration;
+use tokio::signal::unix::{signal, SignalKind};
 
 mod config;
 mod distance;
@@ -34,11 +40,44 @@ const SIGNIFICANCE_DENOM: usize = 1;
 const NUM_SLOTS_IN_MEMORY: u64 = 8;
 
 #[tokio::main(flavor = "multi_thread")]
-async fn main() {
-    run().await.unwrap();
+async fn main() -> ExitCode {
+    let shutdown_signal = Arc::new(AtomicBool::new(false));
+
+    let mut sigint = signal(SignalKind::interrupt()).unwrap();
+    let mut sigterm = signal(SignalKind::terminate()).unwrap();
+
+    // Spawn task in the background.
+    let shutdown_signal_inner = shutdown_signal.clone();
+    let run_handle = tokio::spawn(async move {
+        run(shutdown_signal_inner).await.unwrap();
+    });
+
+    // Wait for signals to shutdown.
+    tokio::select! {
+        _ = sigint.recv()=> {
+            eprintln!("shutting down on SIGINT");
+            shutdown_signal.store(true, Ordering::Relaxed);
+        },
+        _ = sigterm.recv()  => {
+            eprintln!("shutting down on SIGTERM");
+            shutdown_signal.store(true, Ordering::Relaxed);
+        }
+        res = run_handle => {
+            match res {
+                Ok(_) => {
+                    return ExitCode::SUCCESS;
+                }
+                Err(e) => {
+                    eprintln!("{e}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        },
+    }
+    ExitCode::SUCCESS
 }
 
-async fn run() -> Result<(), String> {
+async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     // Load config.
     let config = Config::from_file(Path::new("config.toml")).unwrap();
     eprintln!("{:#?}", config);
@@ -87,7 +126,7 @@ async fn run() -> Result<(), String> {
     // Main loop.
     let mut all_blocks: HashMap<Slot, HashMap<String, BlindedBeaconBlock<E>>> = HashMap::new();
 
-    loop {
+    while !shutdown_signal.load(Ordering::Relaxed) {
         let wait = slot_clock.duration_to_next_slot().expect("post genesis");
         tokio::time::sleep(wait).await;
 
@@ -285,4 +324,6 @@ async fn run() -> Result<(), String> {
         // need the 2 most recent slots, but there's no harm in keeping a few more.
         all_blocks.retain(|stored_slot, _| *stored_slot + NUM_SLOTS_IN_MEMORY >= slot);
     }
+
+    Ok(())
 }
