@@ -1,8 +1,8 @@
 FROM rust:bullseye AS builder
-ADD . / app/
+ADD . /app/
 WORKDIR app
-RUN apt update; \
-    apt install -y \
+RUN apt-get update; \
+    apt-get install -y \
       cmake \
       protobuf-compiler
 RUN cargo build --release
