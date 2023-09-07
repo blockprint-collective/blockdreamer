@@ -1,0 +1,12 @@
+network = "mainnet"
+canonical_bn = "http://localhost:5052"
+
+post_endpoint = "http://localhost:8002/classify"
+post_extra_data = true
+compare_rewards = true
+
+[[nodes]]
+name = "lighthouse-subscribe-none"
+label = "Lighthouse"
+url = "http://localhost:5052"
+skip_randao_verification = true

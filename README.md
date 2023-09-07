@@ -27,4 +27,19 @@ cargo build --release
 
 ## Configuration
 
-Blockdreamer is configured by a `config.toml` in the binary's working directory.
+Blockdreamer is configured by a `config.toml` provided to the `--config` flag.
+
+```
+Ethereum block hallucinator.
+
+Usage: blockdreamer --config <PATH>
+
+Options:
+      --config <PATH>  Path to a TOML configuration file. See docs for examples
+  -h, --help           Print help
+  -V, --version        Print version
+```
+
+An example configuration file can be found at [`example.toml`](./example.toml).
+
+A full list of configuration options can be found in the source: [`src/config.rs`](./src/config.rs).
