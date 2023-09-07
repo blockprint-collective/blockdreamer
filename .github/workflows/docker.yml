@@ -6,9 +6,7 @@ on:
             - main
 
 env:
-    DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-    IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/blockdreamer
+    IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
     # Extract the VERSION which is either `latest` or `vX.Y.Z`, and the VERSION_SUFFIX
@@ -32,6 +30,9 @@ jobs:
     build-docker-single-arch:
         name: build-docker-x86_64
         runs-on: ubuntu-22.04
+        permissions:
+          contents: read
+          packages: write
 
         needs: [extract-version]
         env:
@@ -44,7 +45,7 @@ jobs:
             - uses: docker/setup-qemu-action@v2
             - name: Dockerhub login
               run: |
-                  echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
+                  echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io --username "${{ github.repository_owner }}" --password-stdin
             - name: Map x86_64 to amd64 short arch
               run: echo "SHORT_ARCH=amd64" >> $GITHUB_ENV;
             - name: Build Dockerfile and push
