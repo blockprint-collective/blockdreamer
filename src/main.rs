@@ -10,6 +10,7 @@ use eth2::{
 use eth2_network_config::Eth2NetworkConfig;
 use futures::future::join_all;
 use itertools::Itertools;
+use logging::test_logger;
 use node::Node;
 use sensitive_url::SensitiveUrl;
 use slot_clock::{SlotClock, SystemTimeSlotClock};
@@ -86,6 +87,9 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     eprintln!("{:#?}", config);
     eprintln!("Blockdreamer is ready");
 
+    // This logger is unused currently.
+    let dummy_logger = test_logger();
+
     // Mapping from node name to label.
     let labels = config
         .nodes
@@ -102,7 +106,9 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
         (None, None) => return Err("one of network or network_dir is required".into()),
     };
     let spec = network_config.chain_spec::<E>()?;
-    let genesis_state = network_config.beacon_state::<E>()?;
+    let genesis_state = network_config
+        .genesis_state::<E>(None, std::time::Duration::from_secs(0), &dummy_logger)?
+        .ok_or("genesis state must be known")?;
     let slot_clock = SystemTimeSlotClock::new(
         spec.genesis_slot,
         Duration::from_secs(genesis_state.genesis_time()),
@@ -152,9 +158,7 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
                             slot, current_slot
                         ));
                     }
-                    let slot_offset = slot_clock
-                        .seconds_from_current_slot_start(spec.seconds_per_slot)
-                        .unwrap();
+                    let slot_offset = slot_clock.seconds_from_current_slot_start().unwrap();
                     if VERBOSE {
                         eprintln!(
                             "requesting block from {} at {}s after slot start",

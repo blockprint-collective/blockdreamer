@@ -19,22 +19,11 @@ reqwest = "0.11.11"
 serde_json = "1.0.0"
 clap = { version = "4", features = ["derive"] }
 
-eth2 = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-eth2_network_config = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-sensitive_url = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-slot_clock = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
+eth2 = { git = "https://github.com/sigp/lighthouse", rev = "v4.4.1" }
+eth2_network_config = { git = "https://github.com/sigp/lighthouse", rev = "v4.4.1" }
+sensitive_url = { git = "https://github.com/sigp/lighthouse", rev = "v4.4.1" }
+slot_clock = { git = "https://github.com/sigp/lighthouse", rev = "v4.4.1" }
+logging = { git = "https://github.com/sigp/lighthouse", rev = "v4.4.1" }
 
 [dev-dependencies]
 proptest = "1.0.0"
-
-[patch]
-[patch.crates-io]
-eth2_ssz = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-eth2_ssz_derive = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-eth2_ssz_types = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-tree_hash = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-tree_hash_derive = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-eth2_serde_utils = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-eth2_hashing = { git = "https://github.com/sigp/lighthouse", rev = "v4.0.1" }
-arbitrary = { git = "https://github.com/michaelsproul/arbitrary", rev="f002b99989b561ddce62e4cf2887b0f8860ae991" }
-
