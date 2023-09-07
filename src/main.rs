@@ -1,5 +1,7 @@
+use crate::cli::CliConfig;
 use crate::distance::Distance;
 use crate::post::PostEndpoint;
+use clap::Parser;
 use config::Config;
 use eth2::{
     types::{BlindedBeaconBlock, BlockId, Slot},
@@ -12,7 +14,6 @@ use node::Node;
 use sensitive_url::SensitiveUrl;
 use slot_clock::{SlotClock, SystemTimeSlotClock};
 use std::collections::HashMap;
-use std::path::Path;
 use std::process::ExitCode;
 use std::sync::{
     atomic::{AtomicBool, Ordering},
@@ -21,6 +22,7 @@ use std::sync::{
 use std::time::Duration;
 use tokio::signal::unix::{signal, SignalKind};
 
+mod cli;
 mod config;
 mod distance;
 mod node;
@@ -79,8 +81,10 @@ async fn main() -> ExitCode {
 
 async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     // Load config.
-    let config = Config::from_file(Path::new("config.toml")).unwrap();
+    let cli_config = CliConfig::parse();
+    let config = Config::from_file(&cli_config.config).unwrap();
     eprintln!("{:#?}", config);
+    eprintln!("Blockdreamer is ready");
 
     // Mapping from node name to label.
     let labels = config
