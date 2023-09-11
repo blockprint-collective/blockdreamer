@@ -2,7 +2,7 @@ use crate::cli::CliConfig;
 use crate::distance::Distance;
 use crate::post::PostEndpoint;
 use clap::Parser;
-use config::Config;
+use config::{Config, PostEndpointConfig};
 use eth2::{
     types::{BlindedBeaconBlock, BlockId, Slot},
     BeaconNodeHttpClient, Timeouts,
@@ -130,8 +130,12 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
         BeaconNodeHttpClient::new(url, Timeouts::set_all(Duration::from_secs(6)))
     };
 
-    // Establish connection to post endpoint.
-    let post_endpoint = PostEndpoint::new(&config);
+    // Establish connections to post endpoints.
+    let post_endpoints = config
+        .post_endpoints
+        .iter()
+        .map(|config| PostEndpoint::new(&config))
+        .collect_vec();
 
     // Main loop.
     let mut all_blocks: HashMap<Slot, HashMap<String, BlindedBeaconBlock<E>>> = HashMap::new();
@@ -199,25 +203,29 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
                 block.body().attestations().len()
             );
 
-            if post_endpoint.is_some() {
+            if !post_endpoints.is_empty() {
                 post_blocks.push(block.clone());
             }
 
             slot_blocks.insert(node.config.name.clone(), block);
         }
 
-        if let Some(ref post_endpoint) = post_endpoint {
+        for post_endpoint in &post_endpoints {
             let names_and_labels = nodes
                 .iter()
                 .map(|node| (node.config.name.clone(), node.config.label.clone()))
                 .collect_vec();
             let endpoint = post_endpoint.clone();
+            let post_blocks = post_blocks.clone();
             tokio::spawn(async move {
                 if let Err(e) = endpoint
                     .post_blocks(names_and_labels, post_blocks, slot)
                     .await
                 {
-                    eprintln!("error posting blocks at slot {}: {}", slot, e);
+                    eprintln!(
+                        "error posting blocks to {} at slot {}: {}",
+                        endpoint.name, slot, e
+                    );
                 }
             });
         }

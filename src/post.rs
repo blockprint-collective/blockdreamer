@@ -1,4 +1,4 @@
-use crate::Config;
+use crate::PostEndpointConfig;
 use eth2::types::{BlindedBeaconBlock, EthSpec, Slot};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -10,9 +10,10 @@ use tokio::io::AsyncWriteExt;
 
 #[derive(Clone)]
 pub struct PostEndpoint {
+    pub name: String,
     client: Client,
     url: String,
-    persistence_dir: Option<PathBuf>,
+    results_dir: Option<PathBuf>,
     compare_rewards: bool,
     require_all: bool,
     require_same_parent: bool,
@@ -28,18 +29,20 @@ pub struct PostPayload<E: EthSpec> {
 }
 
 impl PostEndpoint {
-    pub fn new(config: &Config) -> Option<Arc<Self>> {
+    pub fn new(config: &PostEndpointConfig) -> Arc<Self> {
         let client = Client::new();
-        let url = config.post_endpoint.clone()?;
-        Some(Arc::new(Self {
+        let name = config.url.clone();
+        let url = config.url.clone();
+        Arc::new(Self {
+            name,
             client,
             url,
-            persistence_dir: config.post_results_dir.clone(),
+            results_dir: config.results_dir.clone(),
             compare_rewards: config.compare_rewards,
-            require_all: config.post_require_all,
-            require_same_parent: config.post_require_same_parent,
-            extra_data: config.post_extra_data,
-        }))
+            require_all: config.require_all,
+            require_same_parent: config.require_same_parent,
+            extra_data: config.extra_data,
+        })
     }
 
     pub async fn post_blocks<E: EthSpec>(
@@ -111,9 +114,9 @@ impl PostEndpoint {
                 }
             }
 
-            if let Some(persistence_dir) = &self.persistence_dir {
+            if let Some(results_dir) = &self.results_dir {
                 // Store results by client label (same format as blockprint training data).
-                let label_dir = persistence_dir.join(label);
+                let label_dir = results_dir.join(label);
                 create_dir_all(&label_dir)
                     .await
                     .map_err(|e| format!("unable to create {}: {}", label_dir.display(), e))?;
