@@ -94,6 +94,7 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     let labels = config
         .nodes
         .iter()
+        .filter(|node| node.enabled)
         .map(|node| (node.name.clone(), node.label.clone()))
         .collect::<HashMap<_, _>>();
 
@@ -105,7 +106,7 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
         (Some(_), Some(_)) => return Err("conflicting network and network_dir".into()),
         (None, None) => return Err("one of network or network_dir is required".into()),
     };
-    let spec = network_config.chain_spec::<E>()?;
+    let spec = Arc::new(network_config.chain_spec::<E>()?);
     let genesis_state = network_config
         .genesis_state::<E>(
             None,
@@ -124,8 +125,9 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     let nodes = config
         .nodes
         .iter()
+        .filter(|node| node.enabled)
         .cloned()
-        .map(|config| Node::new(config))
+        .map(|config| Node::new(config, spec.clone()))
         .collect::<Result<Vec<_>, String>>()?;
 
     // Establish connection to canonical BN.

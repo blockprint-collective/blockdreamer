@@ -28,6 +28,10 @@ pub struct Node {
     pub skip_randao_verification: bool,
     #[serde(default)]
     pub use_builder: bool,
+    #[serde(default)]
+    pub ssz: bool,
+    #[serde(default = "default_true")]
+    pub enabled: bool,
 }
 
 #[derive(Debug, Deserialize)]
