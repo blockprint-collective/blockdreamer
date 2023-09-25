@@ -107,7 +107,12 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     };
     let spec = network_config.chain_spec::<E>()?;
     let genesis_state = network_config
-        .genesis_state::<E>(None, std::time::Duration::from_secs(0), &dummy_logger)?
+        .genesis_state::<E>(
+            None,
+            Duration::from_secs(cli_config.genesis_state_timeout),
+            &dummy_logger,
+        )
+        .await?
         .ok_or("genesis state must be known")?;
     let slot_clock = SystemTimeSlotClock::new(
         spec.genesis_slot,

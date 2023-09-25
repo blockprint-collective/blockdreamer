@@ -3,8 +3,8 @@ canonical_bn = "http://localhost:5052"
 
 [[post_endpoints]]
 name = "blockgauge"
-url = "http://localhost:8002/classify"
-extra_data = true
+url = "http://localhost:5052/lighthouse/analysis/block_rewards"
+extra_data = false
 compare_rewards = true
 
 [[nodes]]
