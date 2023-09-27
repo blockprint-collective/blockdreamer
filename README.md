@@ -43,3 +43,23 @@ Options:
 An example configuration file can be found at [`example.toml`](./example.toml).
 
 A full list of configuration options can be found in the source: [`src/config.rs`](./src/config.rs).
+
+## Consensus Node Configuration
+
+Ensure that all the consensus nodes configured with blockdreamer have a fee recipient set.
+Block proposals may fail if the fee recipient is not set. A dummy value is usually sufficient,
+e.g. for Lighthouse:
+
+```
+lighthouse bn \
+  --suggested-fee-recipient 0xffffffffffffffffffffffffffffffffffffffff
+```
+
+## Execution Node Configuration
+
+Blockdreamer is often used in conjunction with [Eleel][], which both simplifies the maintenance
+of the consensus node swarm and streamlines block building. Unlike execution nodes which may take
+significant time to build an execution payload, Eleel can build a dummy payload in milliseconds,
+and isn't fussy about how the consensus node asks for that payload.
+
+[Eleel]: https://github.com/sigp/eleel
