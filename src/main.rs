@@ -196,25 +196,28 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
         for (result, node) in join_all(handles).await.into_iter().zip(&nodes) {
             let name = node.config.name.clone();
 
-            let block = match result.map_err(|e| format!("Task panicked: {:?}", e))? {
-                Ok(block) => block,
+            match result.map_err(|e| format!("Task panicked: {:?}", e))? {
+                Ok(block) => {
+                    eprintln!(
+                        "slot {}: block from {} with {} attestations",
+                        slot,
+                        name,
+                        block.body().attestations().len()
+                    );
+
+                    if !post_endpoints.is_empty() {
+                        post_blocks.push(Some(block.clone()));
+                    }
+
+                    slot_blocks.insert(node.config.name.clone(), block);
+                }
                 Err(e) => {
                     eprintln!("{} failed to produce a block: {}", name, e);
-                    continue;
+                    if !post_endpoints.is_empty() {
+                        post_blocks.push(None);
+                    }
                 }
-            };
-            eprintln!(
-                "slot {}: block from {} with {} attestations",
-                slot,
-                name,
-                block.body().attestations().len()
-            );
-
-            if !post_endpoints.is_empty() {
-                post_blocks.push(block.clone());
             }
-
-            slot_blocks.insert(node.config.name.clone(), block);
         }
 
         for post_endpoint in &post_endpoints {
