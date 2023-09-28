@@ -1,5 +1,6 @@
 use crate::PostEndpointConfig;
 use eth2::types::{BlindedBeaconBlock, EthSpec, Slot};
+use itertools::multiunzip;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -48,15 +49,28 @@ impl PostEndpoint {
     pub async fn post_blocks<E: EthSpec>(
         &self,
         names_and_labels: Vec<(String, String)>,
-        blocks: Vec<BlindedBeaconBlock<E>>,
+        opt_blocks: Vec<Option<BlindedBeaconBlock<E>>>,
         slot: Slot,
     ) -> Result<(), String> {
-        if self.require_all && names_and_labels.len() != blocks.len() {
+        let total_nodes = opt_blocks.len();
+        if names_and_labels.len() != opt_blocks.len() {
             return Err(format!(
-                "only got {}/{} blocks",
-                blocks.len(),
+                "logic error: mismatched blocks and nodes: {} vs {}",
+                opt_blocks.len(),
                 names_and_labels.len()
             ));
+        }
+
+        // Filter out nodes that failed.
+        let (names, labels, blocks): (Vec<_>, Vec<_>, Vec<_>) = multiunzip(
+            names_and_labels
+                .into_iter()
+                .zip(opt_blocks)
+                .filter_map(|((name, label), opt_block)| Some((name, label, opt_block?))),
+        );
+
+        if self.require_all && blocks.len() != total_nodes {
+            return Err(format!("only got {}/{} blocks", blocks.len(), total_nodes));
         }
 
         if self.require_same_parent
@@ -68,10 +82,9 @@ impl PostEndpoint {
         }
 
         let response = if self.extra_data {
-            let (names, labels) = names_and_labels.iter().cloned().unzip();
             let payload = PostPayload {
-                names,
-                labels,
+                names: names.clone(),
+                labels: labels.clone(),
                 blocks,
             };
 
@@ -98,10 +111,18 @@ impl PostEndpoint {
             .await
             .map_err(|e| format!("invalid JSON from POST endpoint: {}", e))?;
 
+        if response_json.len() != names.len() {
+            return Err(format!(
+                "bad response, only data for {}/{} blocks",
+                response_json.len(),
+                names.len(),
+            ));
+        }
+
         let mut max_reward = 0;
         let mut max_reward_nodes = vec![];
 
-        for ((name, label), result) in names_and_labels.into_iter().zip(response_json) {
+        for ((name, label), result) in names.iter().zip(labels.iter()).zip(response_json) {
             if self.compare_rewards {
                 let reward = result["attestation_rewards"]["total"].as_u64().unwrap();
                 println!("reward from {name}: {reward} gwei");
