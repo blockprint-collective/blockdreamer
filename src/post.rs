@@ -96,20 +96,18 @@ impl PostEndpoint {
         .await
         .map_err(|e| format!("POST error: {}", e))?;
 
-        if !response.status().is_success() {
-            return Err(format!(
-                "POST failed: {}",
-                response
-                    .text()
-                    .await
-                    .unwrap_or_else(|_| "<body garbled>".into())
-            ));
+        let response_status = response.status();
+        let response_text = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "<body garbled>".into());
+
+        if !response_status.is_success() {
+            return Err(format!("status {response_status}: {response_text}"));
         }
 
-        let response_json: Vec<Value> = response
-            .json()
-            .await
-            .map_err(|e| format!("invalid JSON from POST endpoint: {}", e))?;
+        let response_json: Vec<Value> = serde_json::from_str(&response_text)
+            .map_err(|_| format!("invalid JSON: {response_text}"))?;
 
         if response_json.len() != names.len() {
             return Err(format!(
