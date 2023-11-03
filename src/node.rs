@@ -28,6 +28,41 @@ impl Node {
         })
     }
 
+    pub async fn get_block_v3(&self, slot: Slot) -> Result<ForkVersionedBeaconBlockType<T>, Error> {
+        let randao_reveal = Signature::infinity().unwrap().into();
+        let skip_randao_verification = if self.config.skip_randao_verification {
+            SkipRandaoVerification::Yes
+        } else {
+            SkipRandaoVerification::No
+        };
+        /* 
+        if self.config.ssz {
+            todo!()
+        } else {
+            self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification)
+                .await
+        }
+        */
+        self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification)
+                .await
+    }
+
+    pub async fn get_block_v3_json(
+        &self,
+        slot: Slot,
+        randao_reveal: &SignatureBytes,
+        skip_randao_verification: SkipRandaoVerification,
+    ) -> Result<ForkVersionedBeaconBlockType<T>, Error> {
+        self.client
+            .get_validator_blocks_v3_modular::<E>(
+                slot,
+                randao_reveal,
+                None,
+                skip_randao_verification,
+            )
+            .await
+    }
+
     pub async fn get_block<E: EthSpec>(&self, slot: Slot) -> Result<BeaconBlock<E>, String> {
         let randao_reveal = Signature::infinity().unwrap().into();
         let skip_randao_verification = if self.config.skip_randao_verification {
@@ -86,6 +121,15 @@ impl Node {
             })?;
         BeaconBlock::from_ssz_bytes(&bytes, &self.spec)
             .map_err(|e| format!("Error fetching block from {}: {e:?}", self.config.url))
+    }
+
+    pub async fn get_block_v3_with_timeout<E: EthSpec> (
+        &self,
+        slot: Slot,
+    ) -> Result<ForkVersionedBeaconBlockType<T>, Error> {
+        tokio::time::timeout(Duration::from_secs(6), self.get_block_v3(slot))
+        .await
+        .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
     }
 
     pub async fn get_block_with_timeout<E: EthSpec>(

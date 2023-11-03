@@ -178,6 +178,8 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
                         );
                     }
 
+                    let block_response_type = inner.get_block_v3_with_timeout::<E>(slot).await?;
+
                     let blinded_block = if inner.config.use_builder {
                         inner.get_blinded_block_with_timeout::<E>(slot).await?
                     } else {
