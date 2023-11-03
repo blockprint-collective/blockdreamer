@@ -18,12 +18,13 @@ toml = "0.5"
 reqwest = "0.11.11"
 serde_json = "1.0.0"
 clap = { version = "4", features = ["derive"] }
+libp2p = "0.52.4"
 
 eth2 = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-eth2_network_config = { git = "https://github.com/sigp/lighthouse", rev = "v4.5.0" }
-sensitive_url = { git = "https://github.com/sigp/lighthouse", rev = "v4.5.0" }
-slot_clock = { git = "https://github.com/sigp/lighthouse", rev = "v4.5.0" }
-logging = { git = "https://github.com/sigp/lighthouse", rev = "v4.5.0" }
+eth2_network_config = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+sensitive_url = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+slot_clock = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+logging = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
 
 [dev-dependencies]
 proptest = "1.0.0"

@@ -180,13 +180,19 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
 
                     let block_response_type = inner.get_block_v3_with_timeout::<E>(slot).await?;
 
-                    let blinded_block = if inner.config.use_builder {
-                        inner.get_blinded_block_with_timeout::<E>(slot).await?
-                    } else {
-                        let full_block = inner.get_block_with_timeout::<E>(slot).await?;
-                        let (blinded_block, _payload) = full_block.into();
-                        blinded_block
+                    let blinded_block = match block_response_type {
+                        eth2::types::ForkVersionedBeaconBlockType::Full(block_response) => {
+                            let block_contents = block_response.data;
+                            let (blinded_block, _payload) =
+                                block_contents.block().to_owned().into();
+                            blinded_block
+                        }
+                        eth2::types::ForkVersionedBeaconBlockType::Blinded(block_response) => {
+                            let blinded_block = block_response.data;
+                            blinded_block.block().to_owned()
+                        }
                     };
+
                     Ok(blinded_block)
                 })
             })

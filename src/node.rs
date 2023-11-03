@@ -1,8 +1,9 @@
 use crate::config::Node as NodeConfig;
 use eth2::{
     types::{
-        BeaconBlock, BlindedBeaconBlock, BlindedPayload, ChainSpec, EthSpec, FullPayload,
-        Signature, SignatureBytes, SkipRandaoVerification, Slot,
+        BlindedPayload, BlockContents, ChainSpec, EthSpec,
+        ForkVersionedBeaconBlockType, FullPayload, Signature, SignatureBytes,
+        SkipRandaoVerification, Slot,
     },
     BeaconNodeHttpClient, Timeouts,
 };
@@ -28,14 +29,17 @@ impl Node {
         })
     }
 
-    pub async fn get_block_v3(&self, slot: Slot) -> Result<ForkVersionedBeaconBlockType<T>, Error> {
+    pub async fn get_block_v3<E: EthSpec>(
+        &self,
+        slot: Slot,
+    ) -> Result<ForkVersionedBeaconBlockType<E>, String> {
         let randao_reveal = Signature::infinity().unwrap().into();
         let skip_randao_verification = if self.config.skip_randao_verification {
             SkipRandaoVerification::Yes
         } else {
             SkipRandaoVerification::No
         };
-        /* 
+        /*
         if self.config.ssz {
             todo!()
         } else {
@@ -43,16 +47,16 @@ impl Node {
                 .await
         }
         */
-        self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification)
-                .await
+        self.get_block_v3_json::<E>(slot, &randao_reveal, skip_randao_verification)
+            .await
     }
 
-    pub async fn get_block_v3_json(
+    pub async fn get_block_v3_json<E: EthSpec>(
         &self,
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<ForkVersionedBeaconBlockType<T>, Error> {
+    ) -> Result<ForkVersionedBeaconBlockType<E>, String> {
         self.client
             .get_validator_blocks_v3_modular::<E>(
                 slot,
@@ -61,9 +65,13 @@ impl Node {
                 skip_randao_verification,
             )
             .await
+            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))
     }
 
-    pub async fn get_block<E: EthSpec>(&self, slot: Slot) -> Result<BeaconBlock<E>, String> {
+    pub async fn get_block<E: EthSpec>(
+        &self,
+        slot: Slot,
+    ) -> Result<BlockContents<E, FullPayload<E>>, String> {
         let randao_reveal = Signature::infinity().unwrap().into();
         let skip_randao_verification = if self.config.skip_randao_verification {
             SkipRandaoVerification::Yes
@@ -84,7 +92,7 @@ impl Node {
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, FullPayload<E>>, String> {
         self.client
             .get_validator_blocks_modular::<E, _>(
                 slot,
@@ -102,7 +110,7 @@ impl Node {
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, FullPayload<E>>, String> {
         let bytes = self
             .client
             .get_validator_blocks_modular_ssz::<E, FullPayload<E>>(
@@ -119,23 +127,23 @@ impl Node {
                     self.config.url
                 )
             })?;
-        BeaconBlock::from_ssz_bytes(&bytes, &self.spec)
+        BlockContents::from_ssz_bytes(&bytes, &self.spec)
             .map_err(|e| format!("Error fetching block from {}: {e:?}", self.config.url))
     }
 
-    pub async fn get_block_v3_with_timeout<E: EthSpec> (
+    pub async fn get_block_v3_with_timeout<E: EthSpec>(
         &self,
         slot: Slot,
-    ) -> Result<ForkVersionedBeaconBlockType<T>, Error> {
+    ) -> Result<ForkVersionedBeaconBlockType<E>, String> {
         tokio::time::timeout(Duration::from_secs(6), self.get_block_v3(slot))
-        .await
-        .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
+            .await
+            .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
     }
 
     pub async fn get_block_with_timeout<E: EthSpec>(
         &self,
         slot: Slot,
-    ) -> Result<BeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, FullPayload<E>>, String> {
         tokio::time::timeout(Duration::from_secs(6), self.get_block(slot))
             .await
             .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
@@ -144,7 +152,7 @@ impl Node {
     pub async fn get_blinded_block<E: EthSpec>(
         &self,
         slot: Slot,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, BlindedPayload<E>>, String> {
         let randao_reveal = Signature::infinity().unwrap().into();
         let skip_randao_verification = if self.config.skip_randao_verification {
             SkipRandaoVerification::Yes
@@ -165,7 +173,7 @@ impl Node {
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, BlindedPayload<E>>, String> {
         self.client
             .get_validator_blinded_blocks_modular::<E, _>(
                 slot,
@@ -183,7 +191,7 @@ impl Node {
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, BlindedPayload<E>>, String> {
         let bytes = self
             .client
             .get_validator_blinded_blocks_modular_ssz::<E, BlindedPayload<E>>(
@@ -200,14 +208,14 @@ impl Node {
                     self.config.url
                 )
             })?;
-        BeaconBlock::from_ssz_bytes(&bytes, &self.spec)
+        BlockContents::from_ssz_bytes(&bytes, &self.spec)
             .map_err(|e| format!("Error fetching block from {}: {e:?}", self.config.url))
     }
 
     pub async fn get_blinded_block_with_timeout<E: EthSpec>(
         &self,
         slot: Slot,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
+    ) -> Result<BlockContents<E, BlindedPayload<E>>, String> {
         tokio::time::timeout(Duration::from_secs(6), self.get_blinded_block(slot))
             .await
             .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
