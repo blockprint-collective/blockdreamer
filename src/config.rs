@@ -14,6 +14,7 @@ pub struct Config {
     pub network_dir: Option<PathBuf>,
     pub canonical_bn: String,
     /// URLs to push the dreamt blocks to (probably blockgauge).
+    #[serde(default)]
     pub post_endpoints: Vec<PostEndpointConfig>,
     pub nodes: Vec<Arc<Node>>,
 }
