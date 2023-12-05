@@ -26,10 +26,13 @@ pub struct Node {
     pub url: String,
     #[serde(default)]
     pub skip_randao_verification: bool,
+    // Deprecated.
     #[serde(default)]
     pub use_builder: bool,
-    #[serde(default)]
+    #[serde(default = "default_true")]
     pub ssz: bool,
+    #[serde(default)]
+    pub v3: bool,
     #[serde(default = "default_true")]
     pub enabled: bool,
 }

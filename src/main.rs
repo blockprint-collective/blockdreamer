@@ -87,6 +87,19 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
     eprintln!("{:#?}", config);
     eprintln!("Blockdreamer is ready");
 
+    // Deprecation warnings.
+    for node_config in &config.nodes {
+        if node_config.use_builder {
+            eprintln!(
+                "Node config `use_builder` is deprecated and has no effect ({})",
+                node_config.name
+            );
+        }
+        if node_config.v3 && !node_config.ssz {
+            eprintln!("Node config `v3` requires SSZ ({})", node_config.name);
+        }
+    }
+
     // This logger is unused currently.
     let dummy_logger = test_logger();
 
@@ -178,22 +191,9 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
                         );
                     }
 
-                    let block_response_type = inner.get_block_v3_with_timeout::<E>(slot).await?;
-
-                    let blinded_block = match block_response_type {
-                        eth2::types::ForkVersionedBeaconBlockType::Full(block_response) => {
-                            let block_contents = block_response.data;
-                            let (blinded_block, _payload) =
-                                block_contents.block().to_owned().into();
-                            blinded_block
-                        }
-                        eth2::types::ForkVersionedBeaconBlockType::Blinded(block_response) => {
-                            let blinded_block = block_response.data;
-                            blinded_block.block().to_owned()
-                        }
-                    };
-
-                    Ok(blinded_block)
+                    let (blinded_block, opt_metadata) =
+                        inner.get_block_with_timeout::<E>(slot).await?;
+                    Ok((blinded_block, opt_metadata))
                 })
             })
             .collect::<Vec<_>>();
@@ -205,12 +205,13 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
             let name = node.config.name.clone();
 
             match result.map_err(|e| format!("Task panicked: {:?}", e))? {
-                Ok(block) => {
+                Ok((block, metadata)) => {
                     eprintln!(
-                        "slot {}: block from {} with {} attestations",
+                        "slot {}: block from {} with {} attestations & purported reward {} gwei",
                         slot,
                         name,
-                        block.body().attestations().len()
+                        block.body().attestations().len(),
+                        metadata.map_or(0, |m| m.consensus_block_value)
                     );
 
                     if !post_endpoints.is_empty() {

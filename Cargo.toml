@@ -20,11 +20,11 @@ serde_json = "1.0.0"
 clap = { version = "4", features = ["derive"] }
 libp2p = "0.52.4"
 
-eth2 = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-eth2_network_config = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-sensitive_url = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-slot_clock = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
-logging = { git = "https://github.com/sigp/lighthouse", branch = "unstable" }
+eth2 = { git = "https://github.com/michaelsproul/lighthouse", branch = "v3-api-headers" }
+eth2_network_config = { git = "https://github.com/michaelsproul/lighthouse", branch = "v3-api-headers" }
+sensitive_url = { git = "https://github.com/michaelsproul/lighthouse", branch = "v3-api-headers" }
+slot_clock = { git = "https://github.com/michaelsproul/lighthouse", branch = "v3-api-headers" }
+logging = { git = "https://github.com/michaelsproul/lighthouse", branch = "v3-api-headers" }
 
 [dev-dependencies]
 proptest = "1.0.0"

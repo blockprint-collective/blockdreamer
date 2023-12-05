@@ -122,8 +122,9 @@ impl PostEndpoint {
 
         for ((name, label), result) in names.iter().zip(labels.iter()).zip(response_json) {
             if self.compare_rewards {
-                let reward = result["attestation_rewards"]["total"].as_u64().unwrap();
-                println!("reward from {name}: {reward} gwei");
+                let reward = result["total"].as_u64().unwrap();
+                let att_reward = result["attestation_rewards"]["total"].as_u64().unwrap();
+                println!("rewards from {name}: {reward} gwei (att: {att_reward} gwei)");
 
                 if reward > max_reward {
                     max_reward = reward;
