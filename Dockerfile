@@ -4,7 +4,7 @@ WORKDIR app
 RUN apt-get update; \
     apt-get install -y \
       cmake \
-      protobuf-compiler
+      libclang-dev
 RUN cargo build --release
 
 FROM debian:bullseye-slim
