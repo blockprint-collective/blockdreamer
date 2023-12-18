@@ -1,8 +1,8 @@
 use crate::config::Node as NodeConfig;
 use eth2::{
     types::{
-        BeaconBlock, BlindedBeaconBlock, BlindedPayload, ChainSpec, EthSpec, FullPayload,
-        Signature, SignatureBytes, SkipRandaoVerification, Slot,
+        BlindedBeaconBlock, ChainSpec, EthSpec, FullBlockContents, ProduceBlockV3Metadata,
+        ProduceBlockV3Response, Signature, SignatureBytes, SkipRandaoVerification, Slot,
     },
     BeaconNodeHttpClient, Timeouts,
 };
@@ -28,49 +28,81 @@ impl Node {
         })
     }
 
-    pub async fn get_block<E: EthSpec>(&self, slot: Slot) -> Result<BeaconBlock<E>, String> {
-        let randao_reveal = Signature::infinity().unwrap().into();
-        let skip_randao_verification = if self.config.skip_randao_verification {
-            SkipRandaoVerification::Yes
-        } else {
-            SkipRandaoVerification::No
-        };
-        if self.config.ssz {
-            self.get_block_ssz(slot, &randao_reveal, skip_randao_verification)
-                .await
-        } else {
-            self.get_block_json(slot, &randao_reveal, skip_randao_verification)
-                .await
-        }
-    }
-
-    pub async fn get_block_json<E: EthSpec>(
+    pub async fn get_block_v3_ssz<E: EthSpec>(
         &self,
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BeaconBlock<E>, String> {
-        self.client
-            .get_validator_blocks_modular::<E, _>(
+    ) -> Result<(BlindedBeaconBlock<E>, ProduceBlockV3Metadata), String> {
+        let (response, metadata) = self
+            .client
+            .get_validator_blocks_v3_modular_ssz::<E>(
                 slot,
                 randao_reveal,
                 None,
                 skip_randao_verification,
             )
             .await
-            .map(|res| res.data)
-            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))
+            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?
+            .ok_or_else(|| format!("No block returned from {} (404)", self.config.url))?;
+
+        match response {
+            ProduceBlockV3Response::Full(block_contents) => {
+                // Throw away the blobs for now.
+                Ok((block_contents.block().to_ref().into(), metadata))
+            }
+            ProduceBlockV3Response::Blinded(block) => Ok((block, metadata)),
+        }
     }
 
-    pub async fn get_block_ssz<E: EthSpec>(
+    pub async fn get_block<E: EthSpec>(
+        &self,
+        slot: Slot,
+    ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
+        let randao_reveal = Signature::infinity().unwrap().into();
+        let skip_randao_verification = if self.config.skip_randao_verification {
+            SkipRandaoVerification::Yes
+        } else {
+            SkipRandaoVerification::No
+        };
+        if self.config.v3 {
+            // SSZ is mandatory for v3 now.
+            self.get_block_v3_ssz(slot, &randao_reveal, skip_randao_verification)
+                .await
+                .map(|(block, metadata)| (block, Some(metadata)))
+        } else if self.config.ssz {
+            self.get_block_v2_ssz(slot, &randao_reveal, skip_randao_verification)
+                .await
+        } else {
+            self.get_block_v2_json(slot, &randao_reveal, skip_randao_verification)
+                .await
+        }
+    }
+
+    pub async fn get_block_v2_json<E: EthSpec>(
         &self,
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BeaconBlock<E>, String> {
+    ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
+        let block_contents = self
+            .client
+            .get_validator_blocks_modular::<E>(slot, randao_reveal, None, skip_randao_verification)
+            .await
+            .map(|res| res.data)
+            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?;
+        Ok((block_contents.block().to_ref().into(), None))
+    }
+
+    pub async fn get_block_v2_ssz<E: EthSpec>(
+        &self,
+        slot: Slot,
+        randao_reveal: &SignatureBytes,
+        skip_randao_verification: SkipRandaoVerification,
+    ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
         let bytes = self
             .client
-            .get_validator_blocks_modular_ssz::<E, FullPayload<E>>(
+            .get_validator_blocks_modular_ssz::<E>(
                 slot,
                 randao_reveal,
                 None,
@@ -84,87 +116,16 @@ impl Node {
                     self.config.url
                 )
             })?;
-        BeaconBlock::from_ssz_bytes(&bytes, &self.spec)
-            .map_err(|e| format!("Error fetching block from {}: {e:?}", self.config.url))
+        let block_contents = FullBlockContents::from_ssz_bytes(&bytes, &self.spec)
+            .map_err(|e| format!("Error fetching block from {}: {e:?}", self.config.url))?;
+        Ok((block_contents.block().to_ref().into(), None))
     }
 
     pub async fn get_block_with_timeout<E: EthSpec>(
         &self,
         slot: Slot,
-    ) -> Result<BeaconBlock<E>, String> {
+    ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
         tokio::time::timeout(Duration::from_secs(6), self.get_block(slot))
-            .await
-            .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
-    }
-
-    pub async fn get_blinded_block<E: EthSpec>(
-        &self,
-        slot: Slot,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
-        let randao_reveal = Signature::infinity().unwrap().into();
-        let skip_randao_verification = if self.config.skip_randao_verification {
-            SkipRandaoVerification::Yes
-        } else {
-            SkipRandaoVerification::No
-        };
-        if self.config.ssz {
-            self.get_blinded_block_ssz(slot, &randao_reveal, skip_randao_verification)
-                .await
-        } else {
-            self.get_blinded_block_json(slot, &randao_reveal, skip_randao_verification)
-                .await
-        }
-    }
-
-    pub async fn get_blinded_block_json<E: EthSpec>(
-        &self,
-        slot: Slot,
-        randao_reveal: &SignatureBytes,
-        skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
-        self.client
-            .get_validator_blinded_blocks_modular::<E, _>(
-                slot,
-                randao_reveal,
-                None,
-                skip_randao_verification,
-            )
-            .await
-            .map(|res| res.data)
-            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))
-    }
-
-    pub async fn get_blinded_block_ssz<E: EthSpec>(
-        &self,
-        slot: Slot,
-        randao_reveal: &SignatureBytes,
-        skip_randao_verification: SkipRandaoVerification,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
-        let bytes = self
-            .client
-            .get_validator_blinded_blocks_modular_ssz::<E, BlindedPayload<E>>(
-                slot,
-                randao_reveal,
-                None,
-                skip_randao_verification,
-            )
-            .await
-            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?
-            .ok_or_else(|| {
-                format!(
-                    "Error fetching block from {}: returned 404",
-                    self.config.url
-                )
-            })?;
-        BeaconBlock::from_ssz_bytes(&bytes, &self.spec)
-            .map_err(|e| format!("Error fetching block from {}: {e:?}", self.config.url))
-    }
-
-    pub async fn get_blinded_block_with_timeout<E: EthSpec>(
-        &self,
-        slot: Slot,
-    ) -> Result<BlindedBeaconBlock<E>, String> {
-        tokio::time::timeout(Duration::from_secs(6), self.get_blinded_block(slot))
             .await
             .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
     }
