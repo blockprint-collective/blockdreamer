@@ -95,9 +95,6 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
                 node_config.name
             );
         }
-        if node_config.v3 && !node_config.ssz {
-            eprintln!("Node config `v3` requires SSZ ({})", node_config.name);
-        }
     }
 
     // This logger is unused currently.

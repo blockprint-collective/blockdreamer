@@ -13,5 +13,4 @@ label = "Lighthouse"
 url = "http://localhost:5052"
 v3 = true
 ssz = false
-use_builder = true
 skip_randao_verification = true

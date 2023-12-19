@@ -28,6 +28,32 @@ impl Node {
         })
     }
 
+    pub async fn get_block_v3_json<E: EthSpec>(
+        &self,
+        slot: Slot,
+        randao_reveal: &SignatureBytes,
+        skip_randao_verification: SkipRandaoVerification,
+    ) -> Result<(BlindedBeaconBlock<E>, ProduceBlockV3Metadata), String> {
+        let (response, metadata) = self
+            .client
+            .get_validator_blocks_v3_modular::<E>(
+                slot,
+                randao_reveal,
+                None,
+                skip_randao_verification,
+            )
+            .await
+            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?;
+
+        match response {
+            ProduceBlockV3Response::Full(block_contents) => {
+                // Throw away the blobs for now.
+                Ok((block_contents.block().to_ref().into(), metadata))
+            }
+            ProduceBlockV3Response::Blinded(block) => Ok((block, metadata)),
+        }
+    }
+
     pub async fn get_block_v3_ssz<E: EthSpec>(
         &self,
         slot: Slot,
@@ -43,8 +69,7 @@ impl Node {
                 skip_randao_verification,
             )
             .await
-            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?
-            .ok_or_else(|| format!("No block returned from {} (404)", self.config.url))?;
+            .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?;
 
         match response {
             ProduceBlockV3Response::Full(block_contents) => {
@@ -66,10 +91,14 @@ impl Node {
             SkipRandaoVerification::No
         };
         if self.config.v3 {
-            // SSZ is mandatory for v3 now.
-            self.get_block_v3_ssz(slot, &randao_reveal, skip_randao_verification)
-                .await
-                .map(|(block, metadata)| (block, Some(metadata)))
+            if self.config.ssz {
+                self.get_block_v3_ssz(slot, &randao_reveal, skip_randao_verification)
+                    .await
+            } else {
+                self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification)
+                    .await
+            }
+            .map(|(block, metadata)| (block, Some(metadata)))
         } else if self.config.ssz {
             self.get_block_v2_ssz(slot, &randao_reveal, skip_randao_verification)
                 .await
