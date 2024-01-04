@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "account_utils"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "directory",
  "eth2_keystore",
@@ -575,7 +575,7 @@ dependencies = [
 [[package]]
 name = "bls"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "arbitrary",
  "blst",
@@ -673,7 +673,7 @@ dependencies = [
 [[package]]
 name = "cached_tree_hash"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "ethereum-types 0.14.1",
  "ethereum_hashing",
@@ -834,7 +834,7 @@ checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 [[package]]
 name = "clap_utils"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "clap 2.34.0",
  "dirs",
@@ -866,7 +866,7 @@ checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 [[package]]
 name = "compare_fields"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "itertools",
 ]
@@ -874,7 +874,7 @@ dependencies = [
 [[package]]
 name = "compare_fields_derive"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -1181,7 +1181,7 @@ dependencies = [
 [[package]]
 name = "deposit_contract"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "ethabi",
  "ethereum_ssz",
@@ -1284,7 +1284,7 @@ dependencies = [
 [[package]]
 name = "directory"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "clap 2.34.0",
  "clap_utils",
@@ -1525,7 +1525,7 @@ dependencies = [
 [[package]]
 name = "eth2"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "account_utils",
  "bytes",
@@ -1558,7 +1558,7 @@ dependencies = [
 [[package]]
 name = "eth2_config"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "paste",
  "types",
@@ -1567,7 +1567,7 @@ dependencies = [
 [[package]]
 name = "eth2_interop_keypairs"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "bls",
  "ethereum_hashing",
@@ -1581,7 +1581,7 @@ dependencies = [
 [[package]]
 name = "eth2_key_derivation"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "bls",
  "num-bigint-dig",
@@ -1593,7 +1593,7 @@ dependencies = [
 [[package]]
 name = "eth2_keystore"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "aes 0.7.5",
  "bls",
@@ -1615,7 +1615,7 @@ dependencies = [
 [[package]]
 name = "eth2_network_config"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "bytes",
  "discv5",
@@ -1637,7 +1637,7 @@ dependencies = [
 [[package]]
 name = "eth2_wallet"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "eth2_key_derivation",
  "eth2_keystore",
@@ -1849,7 +1849,7 @@ dependencies = [
 [[package]]
 name = "filesystem"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "winapi",
  "windows-acl",
@@ -2662,7 +2662,7 @@ dependencies = [
 [[package]]
 name = "int_to_bytes"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "bytes",
 ]
@@ -2764,7 +2764,7 @@ dependencies = [
 [[package]]
 name = "kzg"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "arbitrary",
  "c-kzg",
@@ -3431,7 +3431,7 @@ dependencies = [
 [[package]]
 name = "lighthouse_metrics"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "lazy_static",
  "prometheus",
@@ -3440,7 +3440,7 @@ dependencies = [
 [[package]]
 name = "lighthouse_network"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "delay_map",
  "directory",
@@ -3487,7 +3487,7 @@ dependencies = [
 [[package]]
 name = "lighthouse_version"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "git-version",
  "target_info",
@@ -3524,7 +3524,7 @@ dependencies = [
 [[package]]
 name = "lockfile"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "fs2",
 ]
@@ -3538,7 +3538,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 [[package]]
 name = "logging"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "chrono",
  "lazy_static",
@@ -3584,7 +3584,7 @@ dependencies = [
 [[package]]
 name = "lru_cache"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "fnv",
 ]
@@ -3652,7 +3652,7 @@ dependencies = [
 [[package]]
 name = "merkle_proof"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "ethereum-types 0.14.1",
  "ethereum_hashing",
@@ -4404,7 +4404,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "pretty_reqwest_error"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "reqwest",
  "sensitive_url",
@@ -4560,7 +4560,7 @@ dependencies = [
 [[package]]
 name = "proto_array"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "ethereum_ssz",
  "ethereum_ssz_derive",
@@ -5152,7 +5152,7 @@ checksum = "f98d2aa92eebf49b69786be48e4477826b256916e84a57ff2a4f21923b48eb4c"
 [[package]]
 name = "safe_arith"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 
 [[package]]
 name = "salsa20"
@@ -5255,7 +5255,7 @@ checksum = "836fa6a3e1e547f9a2c4040802ec865b5d85f4014efe00555d7090a3dcaa1090"
 [[package]]
 name = "sensitive_url"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "serde",
  "url",
@@ -5431,7 +5431,7 @@ dependencies = [
 [[package]]
 name = "slashing_protection"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "arbitrary",
  "ethereum_serde_utils",
@@ -5550,7 +5550,7 @@ dependencies = [
 [[package]]
 name = "slot_clock"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "lazy_static",
  "lighthouse_metrics",
@@ -5650,7 +5650,7 @@ dependencies = [
 [[package]]
 name = "state_processing"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "arbitrary",
  "bls",
@@ -5681,7 +5681,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "store"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "db-key",
  "directory",
@@ -5758,7 +5758,7 @@ dependencies = [
 [[package]]
 name = "swap_or_not_shuffle"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "ethereum-types 0.14.1",
  "ethereum_hashing",
@@ -5840,7 +5840,7 @@ checksum = "c63f48baada5c52e65a29eef93ab4f8982681b67f9e8d29c7b05abcfec2b9ffe"
 [[package]]
 name = "task_executor"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "exit-future",
  "futures",
@@ -5878,7 +5878,7 @@ dependencies = [
 [[package]]
 name = "test_random_derive"
 version = "0.2.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -6257,7 +6257,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 [[package]]
 name = "types"
 version = "0.2.1"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "arbitrary",
  "bls",
@@ -6427,7 +6427,7 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 [[package]]
 name = "unused_port"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "lazy_static",
  "lru_cache",
@@ -6464,7 +6464,7 @@ dependencies = [
 [[package]]
 name = "validator_dir"
 version = "0.1.0"
-source = "git+https://github.com/michaelsproul/lighthouse?branch=v3-api-headers#64be25362884a86d0293d20d10b4a7a1fa21f570"
+source = "git+https://github.com/eserilev/lighthouse?branch=block-v3-builder-comparison-factor#68e76dda8f3610144d687811bbf7c3b25c21f619"
 dependencies = [
  "bls",
  "deposit_contract",

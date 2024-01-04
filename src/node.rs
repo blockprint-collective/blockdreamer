@@ -33,6 +33,7 @@ impl Node {
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
+        builder_boost_factor: Option<u64>,
     ) -> Result<(BlindedBeaconBlock<E>, ProduceBlockV3Metadata), String> {
         let (response, metadata) = self
             .client
@@ -41,11 +42,12 @@ impl Node {
                 randao_reveal,
                 None,
                 skip_randao_verification,
+                builder_boost_factor,
             )
             .await
             .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?;
 
-        match response {
+        match response.data {
             ProduceBlockV3Response::Full(block_contents) => {
                 // Throw away the blobs for now.
                 Ok((block_contents.block().to_ref().into(), metadata))
@@ -59,6 +61,7 @@ impl Node {
         slot: Slot,
         randao_reveal: &SignatureBytes,
         skip_randao_verification: SkipRandaoVerification,
+        builder_boost_factor: Option<u64>,
     ) -> Result<(BlindedBeaconBlock<E>, ProduceBlockV3Metadata), String> {
         let (response, metadata) = self
             .client
@@ -67,6 +70,7 @@ impl Node {
                 randao_reveal,
                 None,
                 skip_randao_verification,
+                builder_boost_factor,
             )
             .await
             .map_err(|e| format!("Error fetching block from {}: {:?}", self.config.url, e))?;
@@ -83,6 +87,7 @@ impl Node {
     pub async fn get_block<E: EthSpec>(
         &self,
         slot: Slot,
+        builder_boost_factor: Option<u64>,
     ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
         let randao_reveal = Signature::infinity().unwrap().into();
         let skip_randao_verification = if self.config.skip_randao_verification {
@@ -92,10 +97,10 @@ impl Node {
         };
         if self.config.v3 {
             if self.config.ssz {
-                self.get_block_v3_ssz(slot, &randao_reveal, skip_randao_verification)
+                self.get_block_v3_ssz(slot, &randao_reveal, skip_randao_verification, builder_boost_factor)
                     .await
             } else {
-                self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification)
+                self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification, builder_boost_factor)
                     .await
             }
             .map(|(block, metadata)| (block, Some(metadata)))
@@ -153,8 +158,9 @@ impl Node {
     pub async fn get_block_with_timeout<E: EthSpec>(
         &self,
         slot: Slot,
+        builder_boost_factor: Option<u64>,
     ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
-        tokio::time::timeout(Duration::from_secs(6), self.get_block(slot))
+        tokio::time::timeout(Duration::from_secs(6), self.get_block(slot, builder_boost_factor))
             .await
             .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
     }
