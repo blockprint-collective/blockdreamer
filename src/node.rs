@@ -97,11 +97,21 @@ impl Node {
         };
         if self.config.v3 {
             if self.config.ssz {
-                self.get_block_v3_ssz(slot, &randao_reveal, skip_randao_verification, builder_boost_factor)
-                    .await
+                self.get_block_v3_ssz(
+                    slot,
+                    &randao_reveal,
+                    skip_randao_verification,
+                    builder_boost_factor,
+                )
+                .await
             } else {
-                self.get_block_v3_json(slot, &randao_reveal, skip_randao_verification, builder_boost_factor)
-                    .await
+                self.get_block_v3_json(
+                    slot,
+                    &randao_reveal,
+                    skip_randao_verification,
+                    builder_boost_factor,
+                )
+                .await
             }
             .map(|(block, metadata)| (block, Some(metadata)))
         } else if self.config.ssz {
@@ -160,8 +170,11 @@ impl Node {
         slot: Slot,
         builder_boost_factor: Option<u64>,
     ) -> Result<(BlindedBeaconBlock<E>, Option<ProduceBlockV3Metadata>), String> {
-        tokio::time::timeout(Duration::from_secs(6), self.get_block(slot, builder_boost_factor))
-            .await
-            .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
+        tokio::time::timeout(
+            Duration::from_secs(6),
+            self.get_block(slot, builder_boost_factor),
+        )
+        .await
+        .map_err(|_| format!("request to {} timed out after 6s", self.config.name))?
     }
 }
