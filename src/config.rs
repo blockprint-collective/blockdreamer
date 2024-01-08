@@ -36,6 +36,8 @@ pub struct Node {
     pub v3: bool,
     #[serde(default = "default_true")]
     pub enabled: bool,
+    #[serde(default)]
+    pub builder_boost_factor: Option<u64>,
 }
 
 #[derive(Debug, Deserialize)]

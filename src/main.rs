@@ -188,8 +188,9 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
                         );
                     }
 
-                    let (blinded_block, opt_metadata) =
-                        inner.get_block_with_timeout::<E>(slot).await?;
+                    let (blinded_block, opt_metadata) = inner
+                        .get_block_with_timeout::<E>(slot, inner.config.builder_boost_factor)
+                        .await?;
                     Ok((blinded_block, opt_metadata))
                 })
             })
