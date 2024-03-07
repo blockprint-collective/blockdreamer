@@ -4,7 +4,7 @@ use crate::post::PostEndpoint;
 use clap::Parser;
 use config::{Config, PostEndpointConfig};
 use eth2::{
-    types::{BlindedBeaconBlock, BlockId, Slot},
+    types::{BlindedBeaconBlock, BlockId, Slot, Uint256},
     BeaconNodeHttpClient, Timeouts,
 };
 use eth2_network_config::Eth2NetworkConfig;
@@ -205,11 +205,11 @@ async fn run(shutdown_signal: Arc<AtomicBool>) -> Result<(), String> {
             match result.map_err(|e| format!("Task panicked: {:?}", e))? {
                 Ok((block, metadata)) => {
                     eprintln!(
-                        "slot {}: block from {} with {} attestations & purported reward {} gwei",
+                        "slot {}: block from {} with {} attestations & purported reward {} wei",
                         slot,
                         name,
                         block.body().attestations().len(),
-                        metadata.map_or(0, |m| m.consensus_block_value)
+                        metadata.map_or(Uint256::zero(), |m| m.consensus_block_value)
                     );
 
                     if !post_endpoints.is_empty() {
